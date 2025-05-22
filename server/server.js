@@ -12,6 +12,9 @@ app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.static("public"))
 app.use("/book", require("./routes/BooksRouter"))
+app.use("/donor", require("./routes/DonorRouter"))
+app.use("/message", require("./routes/MessageRouter"))
+app.use("/bookNeeded", require("./routes/BookNeededRouter"))
 
 console.log(process.env.NODE_ENV)
 

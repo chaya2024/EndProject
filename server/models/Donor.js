@@ -7,7 +7,7 @@ const donorScheme = new mongoose.Schema({
     email:{
         type:String,
     },
-    numberPhon:{
+    numberPhone:{
         type:String
     },
     commemoratesNames:{
