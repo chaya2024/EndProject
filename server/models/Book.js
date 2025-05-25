@@ -19,6 +19,9 @@ const bookSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    code:{
+
+    },
     author: {
         type: String,
         required: true
@@ -40,5 +43,10 @@ const bookSchema = new mongoose.Schema({
         type: String,
         required: false
     }
+    ,
+    donor: { 
+        type: mongoose.ObjectId, 
+        ref: 'Donor' }
+
 })
 module.exports = mongoose.model('Book', bookSchema)

@@ -15,6 +15,7 @@ app.use("/book", require("./routes/BooksRouter"))
 app.use("/donor", require("./routes/DonorRouter"))
 app.use("/message", require("./routes/MessageRouter"))
 app.use("/bookNeeded", require("./routes/BookNeededRouter"))
+app.use("/auth", require("./routes/AuthRouter"))
 
 console.log(process.env.NODE_ENV)
 

@@ -1,18 +1,11 @@
 const mongoose = require('mongoose')
-
-
-
-const bookNeddedSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
     },
-    author: {
+    password: {
         type: String,
-        required: true
-    },
-    price: {
-        type: Number,
         required: true
     }
 })
