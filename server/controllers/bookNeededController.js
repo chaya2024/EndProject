@@ -31,9 +31,22 @@ const getBookNeededByName = async (req, res) => {
     }
     res.json(bookNeeded)
 }
+const getBookNeededByPriceRange = async (req, res) => {
+    const { minPrice, maxPrice } = req.query
+    if (!minPrice || !maxPrice) {
+        return res.status(400).json({ message: 'minPrice and maxPrice are required' })
+    }
+    const booksNeeded = await BookNeeded.find({
+        price: { $gte: minPrice, $lte: maxPrice }
+    }).lean()
+    if (!booksNeeded || booksNeeded.length === 0) {
+        return res.status(400).json({ message: 'No booksNeeded found in this price range' })
+    }
+    res.json(booksNeeded)
+}
 const updateBookNeeded = async (req, res) => {
     const { id, name, author, price } = req.body
-    if (!id && (!name || !author || !price )) {
+    if (!id && (!name || !author || !price)) {
         return res.status(400).json({ message: 'fields are required' })
     }
     const bookNeeded = await BookNeeded.findById(id).exec()
@@ -61,6 +74,7 @@ module.exports = {
     getAllBookNeeded,
     getBookNeededById,
     getBookNeededByName,
+    getBookNeededByPriceRange,
     updateBookNeeded,
     deleteBookNeeded
 }
