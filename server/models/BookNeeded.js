@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 
-
-
 const bookNeddedSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -16,4 +14,4 @@ const bookNeddedSchema = new mongoose.Schema({
         required: true
     }
 })
-module.exports = mongoose.model('BookNedded', bookNeddedSchema)
+module.exports = mongoose.model('BookNeeded', bookNeddedSchema)

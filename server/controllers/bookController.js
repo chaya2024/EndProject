@@ -1,10 +1,11 @@
 const Book = require('../models/Book')
 const creatNewBook = async (req, res) => {
-    const { name, author, subject, category, notes, image,donor} = req.body
-    if (!name || !author || !subject || !category) {
+    const { name, code, author, subject, category, notes, donor } = req.body
+    const image = req.file ? req.file.filename : null
+    if (!name || !code || !author || !subject || !category) {
         return res.status(400).json({ message: 'fields are required' })
     }
-    const book = await Book.create({ name, author, subject, category, notes, image,donor })
+    const book = await Book.create({ name, code, author, subject, category, notes, image, donor })
     if (book) {
         return res.status(201).json({ message: 'new book created' })
     }
@@ -28,15 +29,23 @@ const getBookById = async (req, res) => {
 }
 const getBookByName = async (req, res) => {
     const { name } = req.params
-    const book = await Book.find({name}).lean()
+    const book = await Book.find({ name }).lean()
     if (!book || book.length === 0) {
+        return res.status(400).json({ message: 'book not exists' })
+    }
+    res.json(book)
+}
+const getBookByCode = async (req, res) => {
+    const { code } = req.params
+    const book = await Book.find({ code }).lean()
+    if (!book) {
         return res.status(400).json({ message: 'book not exists' })
     }
     res.json(book)
 }
 const getBookByCategory = async (req, res) => {
     const { category } = req.params
-    const book = await Book.find({category}).lean()
+    const book = await Book.find({ category }).lean()
     if (!book) {
         return res.status(400).json({ message: 'book not exists' })
     }
@@ -44,7 +53,7 @@ const getBookByCategory = async (req, res) => {
 }
 const getBookBySubject = async (req, res) => {
     const { subject } = req.params
-    const book = await Book.find({subject}).lean()
+    const book = await Book.find({ subject }).lean()
     if (!book) {
         return res.status(400).json({ message: 'book not exists' })
     }
@@ -52,15 +61,15 @@ const getBookBySubject = async (req, res) => {
 }
 const getBookByAuthor = async (req, res) => {
     const { author } = req.params
-    const book = await Book.find({author}).lean()
+    const book = await Book.find({ author }).lean()
     if (!book) {
         return res.status(400).json({ message: 'book not exists' })
     }
     res.json(book)
 }
 const updateBook = async (req, res) => {
-    const { id, name, author, subject, category, notes, image } = req.body
-    if (!id && (!name || !author, !subject, !category, !notes, !image)) {
+    const { id, name, code, author, subject, category, notes, image } = req.body
+    if (!id && (!name || !code || !author, !subject, !category, !notes, !image)) {
         return res.status(400).json({ message: 'fields are required' })
     }
     const book = await Book.findById(id).exec()
@@ -68,6 +77,7 @@ const updateBook = async (req, res) => {
         return res.status(400).json({ message: 'book not found' })
     }
     book.name = name || book.name
+    book.code = code || book.code
     book.author = author || book.author
     book.subject = subject || book.subject
     book.category = category || book.category
@@ -77,7 +87,7 @@ const updateBook = async (req, res) => {
     const updatedBook = await book.save()
     res.json(`The details of '${updatedBook.name}' updated`)
 }
-const deleteBook = async(req,res)=>{
+const deleteBook = async (req, res) => {
     const { id } = req.params
     const book = await Book.findById(id).exec()
     if (!book) {
@@ -91,6 +101,7 @@ module.exports = {
     getAllBooks,
     getBookById,
     getBookByName,
+    getBookByCode,
     getBookByCategory,
     getBookBySubject,
     getBookByAuthor,
