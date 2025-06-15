@@ -44,11 +44,6 @@ const categoryNames = {
 };
 
 const BooksList = () => {
-    // const {token}= useSelector((state) => state.auth);
-    // const [visibleAdd, setVisibleAdd] = useState(false);
-    // const [visibleUpdate, setVisibleUpdate] = useState(false);
-    // const [selectedBook, setSelectedBook] = useState({});
-
     const { data: booksList = [], isLoading, isSuccess, isError, error, refetch } = useGetBooksQuery('',
         {}
     );
@@ -95,21 +90,42 @@ const BooksList = () => {
         doc.save("books.pdf");
     };
 
-    const imageBodyTemplate = (rowData) => (
-        <img src={rowData.image} alt={rowData.title} width={50} />
-    );
+    const imageBodyTemplate = (rowData) => {
+        if (!rowData.image) return null;
+        return (
+            <img 
+                src={`http://localhost:1234/uploads/${rowData.image}`} 
+                alt={rowData.name} 
+                width={50} 
+                style={{ borderRadius: '4px' }}
+                onError={(e) => {
+                    e.target.style.display = 'none';
+                }}
+            />
+        );
+    };
 
     const donorBodyTemplate = (rowData) =>
         rowData.donor ? <Tag value="נתרם" severity="success" /> : null;
 
-    const handleDeleteClick = (bookItem) => {
-        deleteBook({ id: bookItem._id })
+    const handleDeleteClick = async (bookItem) => {
+        if (window.confirm(`האם אתה בטוח שברצונך למחוק את הספר "${bookItem.name}"?`)) {
+            try {
+                await deleteBook(bookItem._id).unwrap();
+                refetch();
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                alert('אירעה שגיאה במחיקת הספר');
+            }
+        }
     }
+
     if (isLoading) return <p>Loading...</p>;
-    if (isError) return <p>Error: {error.message}</p>;
+    if (isError) return <p>Error: {error?.message || 'Unknown error'}</p>;
+    
     return (
         <>
-        <Dialog
+            <Dialog
                 header="הוספת ספר חדש"
                 visible={visibleAdd}
                 style={{ width: '50vw' }}
@@ -124,16 +140,46 @@ const BooksList = () => {
             </Dialog>
             <div className="card">
                 <h2>רשימת ספרים</h2>
-                <Button
-                    label="הוספת ספר"
-                    icon="pi pi-plus"
-                    className="p-button-success"
-                    onClick={() => setVisibleAdd(true)}
-                />
-                <Button type="button" icon="pi pi-file-excel" severity="success" rounded onClick={exportExcel} data-pr-tooltip="XLS" />
-                <Button type="button" icon="pi pi-file-pdf" severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF" />
+                <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem' }}>
+                    <Button
+                        label="הוספת ספר"
+                        icon="pi pi-plus"
+                        className="p-button-success"
+                        onClick={() => setVisibleAdd(true)}
+                    />
+                    <Button 
+                        type="button" 
+                        icon="pi pi-file-excel" 
+                        severity="success" 
+                        rounded 
+                        onClick={exportExcel} 
+                        tooltip="Export to Excel"
+                    />
+                    <Button 
+                        type="button" 
+                        icon="pi pi-file-pdf" 
+                        severity="warning" 
+                        rounded 
+                        onClick={exportPdf} 
+                        tooltip="Export to PDF"
+                    />
+                    <Button 
+                        label="רענן" 
+                        icon="pi pi-refresh" 
+                        className="p-button-secondary" 
+                        onClick={refetch} 
+                    />
+                </div>
             </div>
-            <DataTable value={booksList} loading={isLoading} paginator rows={10} dataKey="id" filterDisplay="row">
+            <DataTable 
+                value={booksList} 
+                loading={isLoading} 
+                paginator 
+                rows={10} 
+                dataKey="_id" 
+                filterDisplay="row"
+                emptyMessage="לא נמצאו ספרים"
+            >
                 <Column field="code" header="קוד ספר" filter filterPlaceholder="חפש לפי קוד" />
                 <Column field="name" header="שם ספר" filter filterPlaceholder="חפש לפי שם ספר" />
                 <Column field="author" header="מחבר" filter filterPlaceholder="חפש לפי מחבר" />
@@ -141,10 +187,18 @@ const BooksList = () => {
                 <Column field="subject" header="נושא" />
                 <Column field="image" header="תמונה" body={imageBodyTemplate} />
                 <Column field="donor" header="תורם" body={donorBodyTemplate} />
-                {/* <Column body={(rowData) => (<Button label="ערוך" icon="pi pi-pencil" className="p-button-warning" onClick={() => editBook(rowData)} />)} /> */}
-                <Column body={(rowData) => (<Button label="מחק" icon="pi pi-trash" className="p-button-danger" onClick={() => handleDeleteClick(rowData)} />)} />
+                <Column 
+                    body={(rowData) => (
+                        <Button 
+                            label="מחק" 
+                            icon="pi pi-trash" 
+                            className="p-button-danger" 
+                            size="small"
+                            onClick={() => handleDeleteClick(rowData)} 
+                        />
+                    )} 
+                />
             </DataTable>
-            <Button label="רענן" icon="pi pi-refresh" className="p-button-secondary" onClick={refetch} />
         </>
     )
 }

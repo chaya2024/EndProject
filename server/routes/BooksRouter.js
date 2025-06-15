@@ -4,7 +4,7 @@ const BooksRouter = express.Router()
 const bookController= require("../controllers/bookController")
 const upload = require('../middleware/uploadImage');
 
-BooksRouter.post("/", upload.array("image", 10), bookController.creatNewBook)
+BooksRouter.post("/", upload.single("image"), bookController.creatNewBook)
 BooksRouter.get("/", bookController.getAllBooks)
 BooksRouter.get("/id/:id", bookController.getBookById)
 BooksRouter.get("/name/:name", bookController.getBookByName)

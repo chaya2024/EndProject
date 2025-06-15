@@ -8,54 +8,54 @@ const bookApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: book
             }),
-            // invalidatesTags: ['Book']
+            invalidatesTags: ['Book']
         }),
         getBooks: build.query({
             query: () => ({ url: "book" }),
-            // providesTags: ['Book']
+            providesTags: ['Book']
         }),
         getBookById: build.query({
             query: (id) => `/book/id/${id}`,
-            //  providesTags: (result, error, id) => [{ type: 'Book', id }]
+            providesTags: (result, error, id) => [{ type: 'Book', id }]
         }),
         getBookByName: build.query({
             query: (name) => `/book/name/${name}`,
-            //  providesTags: (result, error, id) => [{ type: 'Book', id }]
+            providesTags: (result, error, name) => [{ type: 'Book', id: name }]
         }),
         getBookByCode: build.query({
-            query: (code) => `/book/name/${code}`,
-            //  providesTags: (result, error, id) => [{ type: 'Book', id }]
+            query: (code) => `/book/code/${code}`,
+            providesTags: (result, error, code) => [{ type: 'Book', id: code }]
         }),
         getBookByCategory: build.query({
             query: (category) => `/book/category/${category}`,
-            //  providesTags: (result, error, id) => [{ type: 'Book', id }]
+            providesTags: (result, error, category) => [{ type: 'Book', id: category }]
         }),
         getBookBySubject: build.query({
             query: (subject) => `/book/subject/${subject}`,
-            //  providesTags: (result, error, id) => [{ type: 'Book', id }]
+            providesTags: (result, error, subject) => [{ type: 'Book', id: subject }]
         }),
         getBookByAuthor: build.query({
             query: (author) => `/book/author/${author}`,
-            //  providesTags: (result, error, id) => [{ type: 'Book', id }]
+            providesTags: (result, error, author) => [{ type: 'Book', id: author }]
         }),
         updateBook: build.mutation({
             query: ({ id, ...book }) => ({
                 url: `/book`,
                 method: 'PUT',
-                body: book
+                body: { id, ...book }
             }),
-            //  invalidatesTags: (result, error, { id }) => [{ type: 'Book', id }]
+            invalidatesTags: (result, error, { id }) => [{ type: 'Book', id }]
         }),
         deleteBook: build.mutation({
             query: (id) => ({
-                url: `/books/${id}`,
+                url: `/book/${id}`,
                 method: 'DELETE'
             }),
-            //  invalidatesTags: (result, error, id) => [{ type: 'Book', id }]
+            invalidatesTags: (result, error, id) => [{ type: 'Book', id }]
         })
-
     })
 });
+
 export const {
     useAddBookMutation,
     useGetBooksQuery,

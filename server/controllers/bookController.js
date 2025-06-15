@@ -1,101 +1,191 @@
 const Book = require('../models/Book')
 const creatNewBook = async (req, res) => {
-    const { name, code, author, subject, category, notes, donor } = req.body
-    const image = req.file ? req.file.filename : null
-    if (!name || !code || !author || !subject || !category) {
-        return res.status(400).json({ message: 'fields are required' })
-    }
-    const book = await Book.create({ name, code, author, subject, category, notes, image, donor })
-    if (book) {
-        return res.status(201).json({ message: 'new book created' })
-    }
-    res.status(400).json({ message: 'invalid book' })
+    try {
+        const { name, code, author, subject, category, notes, donor } = req.body
+        const image = req.file ? req.file.filename : null
+        
+        if (!name || !code || !author || !subject || !category) {
+            return res.status(400).json({ message: 'Required fields are missing' })
+        }
 
+        // Check if book with same code already exists
+        const existingBook = await Book.findOne({ code })
+        if (existingBook) {
+            return res.status(409).json({ message: 'Book with this code already exists' })
+        }
+
+        const book = await Book.create({ 
+            name, 
+            code: parseInt(code), 
+            author, 
+            subject, 
+            category, 
+            notes, 
+            image, 
+            donor: donor || null 
+        })
+        
+        if (book) {
+            return res.status(201).json({ 
+                message: 'New book created successfully',
+                book: book
+            })
+        }
+        
+        res.status(400).json({ message: 'Invalid book data' })
+    } catch (error) {
+        console.error('Error creating book:', error)
+        res.status(500).json({ 
+            message: 'Internal server error', 
+            error: error.message 
+        })
+    }
 }
+
 const getAllBooks = async (req, res) => {
-    const books = await Book.find().lean()
-    if (!books?.length) {
-        return res.status(400).json({ message: 'No books found' })
+    try {
+        const books = await Book.find().lean()
+        if (!books?.length) {
+            return res.status(200).json([])
+        }
+        res.json(books)
+    } catch (error) {
+        console.error('Error fetching books:', error)
+        res.status(500).json({ message: 'Internal server error' })
     }
-    res.json(books)
 }
-const getBookById = async (req, res) => {
-    const { id } = req.params
-    const book = await Book.findById(id).lean()
-    if (!book) {
-        return res.status(400).json({ message: 'Book not found' })
-    }
-    res.json(book)
-}
-const getBookByName = async (req, res) => {
-    const { name } = req.params
-    const book = await Book.find({ name }).lean()
-    if (!book || book.length === 0) {
-        return res.status(400).json({ message: 'book not exists' })
-    }
-    res.json(book)
-}
-const getBookByCode = async (req, res) => {
-    const { code } = req.params
-    const book = await Book.find({ code }).lean()
-    if (!book) {
-        return res.status(400).json({ message: 'book not exists' })
-    }
-    res.json(book)
-}
-const getBookByCategory = async (req, res) => {
-    const { category } = req.params
-    const book = await Book.find({ category }).lean()
-    if (!book) {
-        return res.status(400).json({ message: 'book not exists' })
-    }
-    res.json(book)
-}
-const getBookBySubject = async (req, res) => {
-    const { subject } = req.params
-    const book = await Book.find({ subject }).lean()
-    if (!book) {
-        return res.status(400).json({ message: 'book not exists' })
-    }
-    res.json(book)
-}
-const getBookByAuthor = async (req, res) => {
-    const { author } = req.params
-    const book = await Book.find({ author }).lean()
-    if (!book) {
-        return res.status(400).json({ message: 'book not exists' })
-    }
-    res.json(book)
-}
-const updateBook = async (req, res) => {
-    const { id, name, code, author, subject, category, notes, image } = req.body
-    if (!id && (!name || !code || !author, !subject, !category, !notes, !image)) {
-        return res.status(400).json({ message: 'fields are required' })
-    }
-    const book = await Book.findById(id).exec()
-    if (!book) {
-        return res.status(400).json({ message: 'book not found' })
-    }
-    book.name = name || book.name
-    book.code = code || book.code
-    book.author = author || book.author
-    book.subject = subject || book.subject
-    book.category = category || book.category
-    book.notes = notes || book.notes
-    book.image = image || book.image
 
-    const updatedBook = await book.save()
-    res.json(`The details of '${updatedBook.name}' updated`)
-}
-const deleteBook = async (req, res) => {
-    const { id } = req.params
-    const book = await Book.findById(id).exec()
-    if (!book) {
-        return res.status(400).json({ message: 'book not found' })
+const getBookById = async (req, res) => {
+    try {
+        const { id } = req.params
+        const book = await Book.findById(id).lean()
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' })
+        }
+        res.json(book)
+    } catch (error) {
+        console.error('Error fetching book:', error)
+        res.status(500).json({ message: 'Internal server error' })
     }
-    const result = await book.deleteOne()
-    res.json(`'${book.name}' deleted`)
 }
+
+const getBookByName = async (req, res) => {
+    try {
+        const { name } = req.params
+        const book = await Book.find({ name: new RegExp(name, 'i') }).lean()
+        if (!book || book.length === 0) {
+            return res.status(404).json({ message: 'Book not found' })
+        }
+        res.json(book)
+    } catch (error) {
+        console.error('Error fetching book:', error)
+        res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
+const getBookByCode = async (req, res) => {
+    try {
+        const { code } = req.params
+        const book = await Book.find({ code: parseInt(code) }).lean()
+        if (!book || book.length === 0) {
+            return res.status(404).json({ message: 'Book not found' })
+        }
+        res.json(book)
+    } catch (error) {
+        console.error('Error fetching book:', error)
+        res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
+const getBookByCategory = async (req, res) => {
+    try {
+        const { category } = req.params
+        const book = await Book.find({ category }).lean()
+        if (!book || book.length === 0) {
+            return res.status(404).json({ message: 'No books found in this category' })
+        }
+        res.json(book)
+    } catch (error) {
+        console.error('Error fetching books:', error)
+        res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
+const getBookBySubject = async (req, res) => {
+    try {
+        const { subject } = req.params
+        const book = await Book.find({ subject: new RegExp(subject, 'i') }).lean()
+        if (!book || book.length === 0) {
+            return res.status(404).json({ message: 'No books found with this subject' })
+        }
+        res.json(book)
+    } catch (error) {
+        console.error('Error fetching books:', error)
+        res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
+const getBookByAuthor = async (req, res) => {
+    try {
+        const { author } = req.params
+        const book = await Book.find({ author: new RegExp(author, 'i') }).lean()
+        if (!book || book.length === 0) {
+            return res.status(404).json({ message: 'No books found by this author' })
+        }
+        res.json(book)
+    } catch (error) {
+        console.error('Error fetching books:', error)
+        res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
+const updateBook = async (req, res) => {
+    try {
+        const { id, name, code, author, subject, category, notes, image } = req.body
+        if (!id) {
+            return res.status(400).json({ message: 'Book ID is required' })
+        }
+        
+        const book = await Book.findById(id).exec()
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' })
+        }
+        
+        book.name = name || book.name
+        book.code = code || book.code
+        book.author = author || book.author
+        book.subject = subject || book.subject
+        book.category = category || book.category
+        book.notes = notes || book.notes
+        book.image = image || book.image
+
+        const updatedBook = await book.save()
+        res.json({ 
+            message: `The details of '${updatedBook.name}' updated successfully`,
+            book: updatedBook
+        })
+    } catch (error) {
+        console.error('Error updating book:', error)
+        res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
+const deleteBook = async (req, res) => {
+    try {
+        const { id } = req.params
+        const book = await Book.findById(id).exec()
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' })
+        }
+        
+        await book.deleteOne()
+        res.json({ message: `'${book.name}' deleted successfully` })
+    } catch (error) {
+        console.error('Error deleting book:', error)
+        res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
 module.exports = {
     creatNewBook,
     getAllBooks,
