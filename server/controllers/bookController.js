@@ -42,6 +42,18 @@ const creatNewBook = async (req, res) => {
     }
 }
 
+    const { name, code, author, subject, category, notes, donor } = req.body
+    const image = req.files && req.files[0] ? req.files[0].filename : null;
+    if (!name || !code || !author || !subject || !category) {
+        return res.status(400).json({ message: 'fields are required' })
+    }
+    const book = await Book.create({ name, code, author, subject, category, notes, image: `/uploads/${image}`, donor })
+    if (book) {
+        return res.status(201).json({ message: 'new book created' })
+    }
+    res.status(400).json({ message: 'invalid book' })
+
+}
 const getAllBooks = async (req, res) => {
     try {
         const books = await Book.find().lean()

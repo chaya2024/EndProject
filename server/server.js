@@ -1,6 +1,7 @@
 require("dotenv").config()
 const express = require("express")
 const cors = require("cors")
+const path = require("path");
 const cron = require('node-cron');
 const mongoose = require("mongoose")
 
@@ -22,7 +23,7 @@ app.use("/donor", require("./routes/DonorRouter"))
 app.use("/message", require("./routes/MessageRouter"))
 app.use("/bookNeeded", require("./routes/BookNeededRouter"))
 app.use("/auth", require("./routes/AuthRouter"))
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 console.log(process.env.NODE_ENV)
 

@@ -90,20 +90,9 @@ const BooksList = () => {
         doc.save("books.pdf");
     };
 
-    const imageBodyTemplate = (rowData) => {
-        if (!rowData.image) return null;
-        return (
-            <img 
-                src={`http://localhost:1234/uploads/${rowData.image}`} 
-                alt={rowData.name} 
-                width={50} 
-                style={{ borderRadius: '4px' }}
-                onError={(e) => {
-                    e.target.style.display = 'none';
-                }}
-            />
-        );
-    };
+    const imageBodyTemplate = (rowData) => (
+        <img src={rowData.image} alt={rowData.title} width={50} />
+    );
 
     const donorBodyTemplate = (rowData) =>
         rowData.donor ? <Tag value="נתרם" severity="success" /> : null;
