@@ -7,19 +7,19 @@ import { Dropdown } from "primereact/dropdown";
 import { FileUpload } from "primereact/fileupload";
 
 const categories = [
-  { label: 'תנ"ך ומפרשיו', value: 'TANACH' },
-  { label: 'מועדים', value: 'FESTIVALS' },
-  { label: 'מחשבה', value: 'THOUGHT' },
-  { label: 'מוסר', value: 'ETHICS' },
-  { label: 'חסידות', value: 'CHASSIDUT' },
-  { label: 'הלכה', value: 'HALACHA' },
-  { label: `מפרשי הש"ס`, value: 'TALMUD_COMMENTATORS' },
-  { label: 'תלמוד בבלי', value: 'BAVLI' },
-  { label: 'תלמוד ירושלמי', value: 'YERUSHALMI' },
-  { label: 'משניות', value: 'MISHNAH' },
-  { label: 'סידורים', value: 'SIDDURIM' },
-  { label: 'שונות', value: 'MISC' },
-  { label: 'קונקורדנציה, אנציקלופדיות ומילונים', value: 'REFERENCE' }
+  { label: 'תנ"ך ומפרשיו', value: 'תנ"ך ומפרשיו' },
+  { label: 'מועדים', value: 'מועדים' },
+  { label: 'מחשבה', value: 'מחשבה' },
+  { label: 'מוסר', value: 'מוסר' },
+  { label: 'חסידות', value: 'חסידות' },
+  { label: 'הלכה', value: 'הלכה' },
+  { label: `מפרשי הש"ס`, value: 'מפרשי הש"ס' },
+  { label: 'תלמוד בבלי', value: 'תלמוד בבלי' },
+  { label: 'תלמוד ירושלמי', value: 'תלמוד ירושלמי' },
+  { label: 'משניות', value: 'משניות' },
+  { label: 'סידורים', value: 'סידורים' },
+  { label: 'שונות', value: 'שונות' },
+  { label: 'קונקורדנציה, אנציקלופדיות ומילונים', value: 'קונקורדנציה, אנציקלופדיות ומילונים' }
 ];
 
 const AddBook = ({ onSuccess }) => {
@@ -43,6 +43,15 @@ const AddBook = ({ onSuccess }) => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleFileSelect = (e) => {
+    if (e.files && e.files.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        image: e.files[0]
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -75,18 +84,25 @@ const AddBook = ({ onSuccess }) => {
       });
       if (onSuccess) onSuccess();
     } catch (err) {
-      alert("אירעה שגיאה בהוספת הספר");
+      alert("אירעה שגיאה בהוספת הספר: " + (err?.data?.message || err?.message || 'שגיאה לא ידועה'));
       console.error(err);
     }
   };
 
   return (
-    <div className="book-form">
+    <div className="book-form" style={{ padding: '1rem' }}>
       <h2>הוספת ספר חדש</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div className="p-field">
           <label htmlFor="code">קוד ספר</label>
-          <InputText id="code" name="code" value={formData.code} onChange={handleChange} required />
+          <InputText 
+            id="code" 
+            name="code" 
+            value={formData.code} 
+            onChange={handleChange} 
+            required 
+            type="number"
+          />
         </div>
         <div className="p-field">
           <label htmlFor="name">שם ספר</label>
@@ -102,7 +118,15 @@ const AddBook = ({ onSuccess }) => {
         </div>
         <div className="p-field">
           <label htmlFor="category">קטגוריה</label>
-          <Dropdown id="category" name="category" value={formData.category} options={categories} onChange={handleChange} placeholder="בחר קטגוריה" />
+          <Dropdown 
+            id="category" 
+            name="category" 
+            value={formData.category} 
+            options={categories} 
+            onChange={handleChange} 
+            placeholder="בחר קטגוריה" 
+            required
+          />
         </div>
         <div className="p-field">
           <label htmlFor="notes">הערות</label>
@@ -114,14 +138,18 @@ const AddBook = ({ onSuccess }) => {
             id="image"
             name="image"
             mode="basic"
-            accept=".jpg,.jpeg,.png"
-            customUpload
-            uploadHandler={(e) => setFormData({ ...formData, image: e.files[0] })}
+            accept="image/*"
+            maxFileSize={5000000}
+            onSelect={handleFileSelect}
+            chooseLabel="בחר תמונה"
           />
-          {/* תצוגה מקדימה */}
           {formData.image && (
             <div style={{ marginTop: '1rem' }}>
-              <img src={URL.createObjectURL(formData.image)} alt="תצוגה" width={120} />
+              <img 
+                src={URL.createObjectURL(formData.image)} 
+                alt="תצוגה מקדימה" 
+                style={{ width: '120px', height: 'auto', borderRadius: '4px' }}
+              />
             </div>
           )}
         </div>
@@ -129,7 +157,13 @@ const AddBook = ({ onSuccess }) => {
           <label htmlFor="donor">תורם</label>
           <InputText id="donor" name="donor" value={formData.donor} onChange={handleChange} />
         </div>
-        <Button type="submit" label="הוסף ספר" icon="pi pi-plus" loading={isLoading} />
+        <Button 
+          type="submit" 
+          label="הוסף ספר" 
+          icon="pi pi-plus" 
+          loading={isLoading} 
+          className="p-button-success"
+        />
       </form>
     </div>
   );

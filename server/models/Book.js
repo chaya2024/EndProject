@@ -1,19 +1,5 @@
 const mongoose = require('mongoose')
-const Category = {
-    TANACH: `תנ"ך ומפרשיו`,
-    FESTIVALS: "מועדים",
-    THOUGHT: "מחשבה",
-    ETHICS: "מוסר",
-    CHASSIDUT: "חסידות",
-    HALACHA: "הלכה",
-    TALMUD_COMMENTATORS: `מפרשי הש"ס`,
-    BAVLI: "תלמוד בבלי",
-    YERUSHALMI: "תלמוד ירושלמי",
-    MISHNAH: "משניות",
-    SIDDURIM: "סידורים",
-    MISC: "שונות",
-    REFERENCE: "קונקורדנציה, אנציקלופדיות ומילונים"
-};
+
 const bookSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -34,22 +20,23 @@ const bookSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: Object.values(Category),
         required: true
     },
     notes: {
         type: String,
-        required: false
+        required: false,
+        default: ''
     },
     image: {
         type: String,
         required: false
-    }
-    ,
+    },
     donor: {
         type: mongoose.ObjectId,
         ref: 'Donor'
     }
-
+}, {
+    timestamps: true
 })
+
 module.exports = mongoose.model('Book', bookSchema)
