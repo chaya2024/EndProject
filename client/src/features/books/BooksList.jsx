@@ -12,35 +12,19 @@ import AddBook from './AddBook';
 import { Dialog } from 'primereact/dialog';
 
 const categoryColors = {
-    TANACH: '#4CAF50',
-    FESTIVALS: '#FF9800',
-    THOUGHT: '#2196F3',
-    ETHICS: '#00BCD4',
-    CHASSIDUT: '#9C27B0',
-    HALACHA: '#3F51B5',
-    TALMUD_COMMENTATORS: '#673AB7',
-    BAVLI: '#8BC34A',
-    YERUSHALMI: '#CDDC39',
-    MISHNAH: '#FFC107',
-    SIDDURIM: '#E91E63',
-    MISC: '#9E9E9E',
-    REFERENCE: '#795548',
-};
-
-const categoryNames = {
-    TANACH: `תנ"ך ומפרשיו`,
-    FESTIVALS: "מועדים",
-    THOUGHT: "מחשבה",
-    ETHICS: "מוסר",
-    CHASSIDUT: "חסידות",
-    HALACHA: "הלכה",
-    TALMUD_COMMENTATORS: `מפרשי הש"ס`,
-    BAVLI: "תלמוד בבלי",
-    YERUSHALMI: "תלמוד ירושלמי",
-    MISHNAH: "משניות",
-    SIDDURIM: "סידורים",
-    MISC: "שונות",
-    REFERENCE: "קונקורדנציה, אנציקלופדיות ומילונים"
+    'תנ"ך ומפרשיו': '#4CAF50',
+    'מועדים': '#FF9800',
+    'מחשבה': '#2196F3',
+    'מוסר': '#00BCD4',
+    'חסידות': '#9C27B0',
+    'הלכה': '#3F51B5',
+    'מפרשי הש"ס': '#673AB7',
+    'תלמוד בבלי': '#8BC34A',
+    'תלמוד ירושלמי': '#CDDC39',
+    'משניות': '#FFC107',
+    'סידורים': '#E91E63',
+    'שונות': '#9E9E9E',
+    'קונקורדנציה, אנציקלופדיות ומילונים': '#795548',
 };
 
 const BooksList = () => {
@@ -50,12 +34,12 @@ const BooksList = () => {
     const [deleteBook] = useDeleteBookMutation()
 
     const categoryBodyTemplate = (rowData) => {
-        const key = rowData.category;
+        const category = rowData.category;
         return (
             <Tag
-                value={categoryNames[key] || key}
+                value={category}
                 style={{
-                    backgroundColor: categoryColors[key] || '#ccc',
+                    backgroundColor: categoryColors[category] || '#ccc',
                     color: 'white',
                 }}
             />
@@ -91,28 +75,38 @@ const BooksList = () => {
     };
 
     const imageBodyTemplate = (rowData) => {
-        if (!rowData.image) return null;
+        if (!rowData.image) return <span>אין תמונה</span>;
+        
+        const imageUrl = `http://localhost:1234/uploads/${rowData.image}`;
+        
         return (
             <img 
-                src={`http://localhost:1234/uploads/${rowData.image}`} 
+                src={imageUrl}
                 alt={rowData.name} 
-                width={50} 
-                style={{ borderRadius: '4px' }}
+                style={{ 
+                    width: '50px', 
+                    height: '50px', 
+                    objectFit: 'cover',
+                    borderRadius: '4px' 
+                }}
                 onError={(e) => {
-                    e.target.style.display = 'none';
+                    console.error('Image failed to load:', imageUrl);
+                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNSAyMEMyNi4zODA3IDIwIDI3LjUgMTguODgwNyAyNy41IDE3LjVDMjcuNSAxNi4xMTkzIDI2LjM4MDcgMTUgMjUgMTVDMjMuNjE5MyAxNSAyMi41IDE2LjExOTMgMjIuNSAxNy41QzIyLjUgMTguODgwNyAyMy42MTkzIDIwIDI1IDIwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNMzUgMzVIMTVMMjAgMjVMMjUgMzBMMzAgMjBMMzUgMzVaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=';
+                    e.target.alt = 'תמונה לא זמינה';
                 }}
             />
         );
     };
 
     const donorBodyTemplate = (rowData) =>
-        rowData.donor ? <Tag value="נתרם" severity="success" /> : null;
+        rowData.donor ? <Tag value="נתרם" severity="success" /> : <Tag value="לא נתרם" severity="secondary" />;
 
     const handleDeleteClick = async (bookItem) => {
         if (window.confirm(`האם אתה בטוח שברצונך למחוק את הספר "${bookItem.name}"?`)) {
             try {
                 await deleteBook(bookItem._id).unwrap();
                 refetch();
+                alert('הספר נמחק בהצלחה');
             } catch (error) {
                 console.error('Error deleting book:', error);
                 alert('אירעה שגיאה במחיקת הספר');
@@ -120,16 +114,17 @@ const BooksList = () => {
         }
     }
 
-    if (isLoading) return <p>Loading...</p>;
-    if (isError) return <p>Error: {error?.message || 'Unknown error'}</p>;
+    if (isLoading) return <div style={{ textAlign: 'center', padding: '2rem' }}>טוען...</div>;
+    if (isError) return <div style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>שגיאה: {error?.message || 'שגיאה לא ידועה'}</div>;
     
     return (
         <>
             <Dialog
                 header="הוספת ספר חדש"
                 visible={visibleAdd}
-                style={{ width: '50vw' }}
+                style={{ width: '50vw', minWidth: '400px' }}
                 onHide={() => setVisibleAdd(false)}
+                modal
             >
                 <AddBook
                     onSuccess={() => {
@@ -138,9 +133,9 @@ const BooksList = () => {
                     }}
                 />
             </Dialog>
-            <div className="card">
+            <div className="card" style={{ padding: '1rem' }}>
                 <h2>רשימת ספרים</h2>
-                <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem' }}>
+                <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <Button
                         label="הוספת ספר"
                         icon="pi pi-plus"
@@ -170,35 +165,37 @@ const BooksList = () => {
                         onClick={refetch} 
                     />
                 </div>
+                <DataTable 
+                    value={booksList} 
+                    loading={isLoading} 
+                    paginator 
+                    rows={10} 
+                    dataKey="_id" 
+                    filterDisplay="row"
+                    emptyMessage="לא נמצאו ספרים"
+                    responsiveLayout="scroll"
+                >
+                    <Column field="code" header="קוד ספר" filter filterPlaceholder="חפש לפי קוד" sortable />
+                    <Column field="name" header="שם ספר" filter filterPlaceholder="חפש לפי שם ספר" sortable />
+                    <Column field="author" header="מחבר" filter filterPlaceholder="חפש לפי מחבר" sortable />
+                    <Column field="category" header="קטגוריה" body={categoryBodyTemplate} filter filterPlaceholder="חפש לפי קטגוריה" sortable />
+                    <Column field="subject" header="נושא" />
+                    <Column field="image" header="תמונה" body={imageBodyTemplate} />
+                    <Column field="donor" header="תורם" body={donorBodyTemplate} />
+                    <Column 
+                        body={(rowData) => (
+                            <Button 
+                                label="מחק" 
+                                icon="pi pi-trash" 
+                                className="p-button-danger" 
+                                size="small"
+                                onClick={() => handleDeleteClick(rowData)} 
+                            />
+                        )} 
+                        header="פעולות"
+                    />
+                </DataTable>
             </div>
-            <DataTable 
-                value={booksList} 
-                loading={isLoading} 
-                paginator 
-                rows={10} 
-                dataKey="_id" 
-                filterDisplay="row"
-                emptyMessage="לא נמצאו ספרים"
-            >
-                <Column field="code" header="קוד ספר" filter filterPlaceholder="חפש לפי קוד" />
-                <Column field="name" header="שם ספר" filter filterPlaceholder="חפש לפי שם ספר" />
-                <Column field="author" header="מחבר" filter filterPlaceholder="חפש לפי מחבר" />
-                <Column field="category" header="קטגוריה" body={categoryBodyTemplate} filter filterPlaceholder="חפש לפי קטגוריה" />
-                <Column field="subject" header="נושא" />
-                <Column field="image" header="תמונה" body={imageBodyTemplate} />
-                <Column field="donor" header="תורם" body={donorBodyTemplate} />
-                <Column 
-                    body={(rowData) => (
-                        <Button 
-                            label="מחק" 
-                            icon="pi pi-trash" 
-                            className="p-button-danger" 
-                            size="small"
-                            onClick={() => handleDeleteClick(rowData)} 
-                        />
-                    )} 
-                />
-            </DataTable>
         </>
     )
 }

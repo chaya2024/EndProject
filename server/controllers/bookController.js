@@ -4,12 +4,14 @@ const creatNewBook = async (req, res) => {
         const { name, code, author, subject, category, notes, donor } = req.body
         const image = req.file ? req.file.filename : null
         
+        console.log('Received book data:', { name, code, author, subject, category, notes, donor, image });
+        
         if (!name || !code || !author || !subject || !category) {
             return res.status(400).json({ message: 'Required fields are missing' })
         }
 
         // Check if book with same code already exists
-        const existingBook = await Book.findOne({ code })
+        const existingBook = await Book.findOne({ code: parseInt(code) })
         if (existingBook) {
             return res.status(409).json({ message: 'Book with this code already exists' })
         }
@@ -20,10 +22,12 @@ const creatNewBook = async (req, res) => {
             author, 
             subject, 
             category, 
-            notes, 
+            notes: notes || '', 
             image, 
             donor: donor || null 
         })
+        
+        console.log('Book created successfully:', book);
         
         if (book) {
             return res.status(201).json({ 
