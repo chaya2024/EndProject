@@ -24,31 +24,31 @@ const categories = [
 
 const UpdateBook = ({ book, onSuccess, onClose }) => {
   const [formData, setFormData] = useState({
-    id: book._id,
-    code: book.code || '',
-    name: book.name || '',
-    author: book.author || '',
-    subject: book.subject || '',
-    category: book.category || '',
-    notes: book.notes || '',
-    donor: book.donor || '',
+    code: '',
+    name: '',
+    author: '',
+    subject: '',
+    category: '',
+    notes: '',
+    donor: '',
     image: null
   });
   
   const [updateBook, { isLoading }] = useUpdateBookMutation();
 
   useEffect(() => {
-    setFormData({
-      id: book._id,
-      code: book.code || '',
-      name: book.name || '',
-      author: book.author || '',
-      subject: book.subject || '',
-      category: book.category || '',
-      notes: book.notes || '',
-      donor: book.donor || '',
-      image: null
-    });
+    if (book) {
+      setFormData({
+        code: book.code || '',
+        name: book.name || '',
+        author: book.author || '',
+        subject: book.subject || '',
+        category: book.category || '',
+        notes: book.notes || '',
+        donor: book.donor || '',
+        image: null
+      });
+    }
   }, [book]);
 
   const handleChange = (e) => {
@@ -70,7 +70,7 @@ const UpdateBook = ({ book, onSuccess, onClose }) => {
     e.preventDefault();
 
     const form = new FormData();
-    form.append("id", formData.id); // Use formData.id instead of book.id
+    form.append("id", book._id); // Use book._id directly
     form.append("code", formData.code);
     form.append("name", formData.name);
     form.append("author", formData.author);
