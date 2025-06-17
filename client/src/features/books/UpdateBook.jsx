@@ -69,31 +69,40 @@ const UpdateBook = ({ book, onSuccess, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const form = new FormData();
-    form.append("id", book._id); // Use book._id directly
-    form.append("code", formData.code);
-    form.append("name", formData.name);
-    form.append("author", formData.author);
-    form.append("subject", formData.subject);
-    form.append("category", formData.category);
-    form.append("notes", formData.notes);
-    form.append("donor", formData.donor);
-    
-    // Only append image if a new one was selected
-    if (formData.image && typeof formData.image !== "string") {
-      form.append("image", formData.image);
-    }
-
     try {
+      const form = new FormData();
+      form.append("id", book._id);
+      form.append("code", formData.code.toString());
+      form.append("name", formData.name);
+      form.append("author", formData.author);
+      form.append("subject", formData.subject);
+      form.append("category", formData.category);
+      form.append("notes", formData.notes);
+      form.append("donor", formData.donor);
+      
+      // Only append image if a new one was selected
+      if (formData.image && typeof formData.image !== "string") {
+        form.append("image", formData.image);
+      }
+
+      console.log('Sending update with FormData:');
+      for (let [key, value] of form.entries()) {
+        console.log(key, value);
+      }
+
       await updateBook(form).unwrap();
       alert("הספר עודכן בהצלחה!");
-      onSuccess?.();
-      onClose?.();
+      if (onSuccess) onSuccess();
+      if (onClose) onClose();
     } catch (err) {
+      console.error('Update error:', err);
       alert("אירעה שגיאה בעדכון הספר: " + (err?.data?.message || err?.message || 'שגיאה לא ידועה'));
-      console.error(err);
     }
   };
+
+  if (!book) {
+    return <div>טוען...</div>;
+  }
 
   return (
     <div className="book-form" style={{ padding: '1rem' }}>
