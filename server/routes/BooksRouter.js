@@ -12,7 +12,7 @@ BooksRouter.get("/code/:code", bookController.getBookByCode)
 BooksRouter.get("/category/:category", bookController.getBookByCategory)
 BooksRouter.get("/subject/:subject", bookController.getBookBySubject)
 BooksRouter.get("/author/:author", bookController.getBookByAuthor)
-BooksRouter.put("/", verifyJWT, bookController.updateBook)
-BooksRouter.delete("/:id", verifyJWT, bookController.deleteBook)
+BooksRouter.put("/", bookController.updateBook)
+BooksRouter.delete("/:id", bookController.deleteBook)
 
 module.exports = BooksRouter

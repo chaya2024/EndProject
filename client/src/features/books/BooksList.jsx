@@ -10,21 +10,22 @@ import 'jspdf-autotable';
 import { useSelector } from 'react-redux';
 import AddBook from './AddBook';
 import { Dialog } from 'primereact/dialog';
+import UpdateBook from './UpdateBook';
 
 const categoryColors = {
-    'תנ"ך ומפרשיו': '#4CAF50',
-    'מועדים': '#FF9800',
-    'מחשבה': '#2196F3',
-    'מוסר': '#00BCD4',
-    'חסידות': '#9C27B0',
-    'הלכה': '#3F51B5',
-    'מפרשי הש"ס': '#673AB7',
-    'תלמוד בבלי': '#8BC34A',
-    'תלמוד ירושלמי': '#CDDC39',
-    'משניות': '#FFC107',
-    'סידורים': '#E91E63',
-    'שונות': '#9E9E9E',
-    'קונקורדנציה, אנציקלופדיות ומילונים': '#795548',
+    'תנ"ך ומפרשיו': '#A5D6A7', // ירוק עדין
+  'מועדים': '#FFE0B2',       // כתום רך
+  'מחשבה': '#90CAF9',        // כחול בהיר
+  'מוסר': '#B2EBF2',          // תכלת עדין
+  'חסידות': '#E1BEE7',       // סגול פסטלי
+  'הלכה': '#C5CAE9',         // כחול-אפרפר
+  'מפרשי הש"ס': '#D1C4E9',    // סגול מעושן
+  'תלמוד בבלי': '#DCEDC8',   // ירקרק בהיר
+  'תלמוד ירושלמי': '#F0F4C3', // צהוב ירקרק
+  'משניות': '#FFECB3',       // צהוב פסטלי
+  'סידורים': '#F8BBD0',      // ורוד רך
+  'שונות': '#E0E0E0',        // אפור בהיר
+  'קונקורדנציה, אנציקלופדיות ומילונים': '#D7CCC8' // חום-ניוד רך
 };
 
 const BooksList = () => {
@@ -46,6 +47,7 @@ const BooksList = () => {
         );
     };
     const [visibleAdd, setVisibleAdd] = useState(false);
+    const [selectedBook, setSelectedBook] = useState(false);
 
     const exportExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(booksList);
@@ -76,18 +78,18 @@ const BooksList = () => {
 
     const imageBodyTemplate = (rowData) => {
         if (!rowData.image) return <span>אין תמונה</span>;
-        
+
         const imageUrl = `http://localhost:1234/uploads/${rowData.image}`;
-        
+
         return (
-            <img 
+            <img
                 src={imageUrl}
-                alt={rowData.name} 
-                style={{ 
-                    width: '50px', 
-                    height: '50px', 
+                alt={rowData.name}
+                style={{
+                    width: '50px',
+                    height: '50px',
                     objectFit: 'cover',
-                    borderRadius: '4px' 
+                    borderRadius: '4px'
                 }}
                 onError={(e) => {
                     console.error('Image failed to load:', imageUrl);
@@ -99,12 +101,13 @@ const BooksList = () => {
     };
 
     const donorBodyTemplate = (rowData) =>
-        rowData.donor ? <Tag value="נתרם" severity="success" /> : <Tag value="לא נתרם" severity="secondary" />;
+        rowData.donor ? <Tag value="נתרם" severity="success" /> : <Tag value="לא נתרם" severity="secondary" style={{ backgroundColor: '#ffff', color: 'black' }}
+/>;
 
     const handleDeleteClick = async (bookItem) => {
         if (window.confirm(`האם אתה בטוח שברצונך למחוק את הספר "${bookItem.name}"?`)) {
             try {
-                await deleteBook(bookItem._id).unwrap();
+                await deleteBook(bookItem._id ).unwrap();
                 refetch();
                 alert('הספר נמחק בהצלחה');
             } catch (error) {
@@ -116,7 +119,7 @@ const BooksList = () => {
 
     if (isLoading) return <div style={{ textAlign: 'center', padding: '2rem' }}>טוען...</div>;
     if (isError) return <div style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>שגיאה: {error?.message || 'שגיאה לא ידועה'}</div>;
-    
+
     return (
         <>
             <Dialog
@@ -133,6 +136,21 @@ const BooksList = () => {
                     }}
                 />
             </Dialog>
+            <Dialog
+                header="עדכון הספר"
+                visible={!!selectedBook}
+                style={{ width: '50vw', minWidth: '400px' }}
+                onHide={() => setSelectedBook(false)}
+                modal
+            >
+                <UpdateBook
+                    book={selectedBook}
+                    onSuccess={() => {
+                        setSelectedBook(null);
+                        refetch();
+                    }}
+                />
+            </Dialog>
             <div className="card" style={{ padding: '1rem' }}>
                 <h2>רשימת ספרים</h2>
                 <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -142,58 +160,74 @@ const BooksList = () => {
                         className="p-button-success"
                         onClick={() => setVisibleAdd(true)}
                     />
-                    <Button 
-                        type="button" 
-                        icon="pi pi-file-excel" 
-                        severity="success" 
-                        rounded 
-                        onClick={exportExcel} 
+                    <Button
+                        type="button"
+                        icon="pi pi-file-excel"
+                        severity="success"
+                        rounded
+                        onClick={exportExcel}
                         tooltip="Export to Excel"
                     />
-                    <Button 
-                        type="button" 
-                        icon="pi pi-file-pdf" 
-                        severity="warning" 
-                        rounded 
-                        onClick={exportPdf} 
+                    <Button
+                        type="button"
+                        icon="pi pi-file-pdf"
+                        severity="warning"
+                        rounded
+                        onClick={exportPdf}
                         tooltip="Export to PDF"
                     />
-                    <Button 
-                        label="רענן" 
-                        icon="pi pi-refresh" 
-                        className="p-button-secondary" 
-                        onClick={refetch} 
+                    <Button
+                        label="רענן"
+                        icon="pi pi-refresh"
+                        className="p-button-secondary"
+                        onClick={refetch}
                     />
                 </div>
-                <DataTable 
-                    value={booksList} 
-                    loading={isLoading} 
-                    paginator 
-                    rows={10} 
-                    dataKey="_id" 
+                <DataTable
+                    value={booksList}
+                    loading={isLoading}
+                    paginator
+                    rows={10}
+                    dataKey="_id"
                     filterDisplay="row"
                     emptyMessage="לא נמצאו ספרים"
                     responsiveLayout="scroll"
                 >
-                    <Column field="code" header="קוד ספר" filter filterPlaceholder="חפש לפי קוד" sortable />
-                    <Column field="name" header="שם ספר" filter filterPlaceholder="חפש לפי שם ספר" sortable />
-                    <Column field="author" header="מחבר" filter filterPlaceholder="חפש לפי מחבר" sortable />
-                    <Column field="category" header="קטגוריה" body={categoryBodyTemplate} filter filterPlaceholder="חפש לפי קטגוריה" sortable />
-                    <Column field="subject" header="נושא" />
-                    <Column field="image" header="תמונה" body={imageBodyTemplate} />
-                    <Column field="donor" header="תורם" body={donorBodyTemplate} />
-                    <Column 
-                        body={(rowData) => (
-                            <Button 
-                                label="מחק" 
-                                icon="pi pi-trash" 
-                                className="p-button-danger" 
-                                size="small"
-                                onClick={() => handleDeleteClick(rowData)} 
-                            />
-                        )} 
+                    <Column
                         header="פעולות"
+                        body={(rowData) => (
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem" }}>
+                                <Button
+                                    icon="pi pi-pencil"
+                                    className="p-button-warning"
+                                    size="small"
+                                    onClick={() => setSelectedBook(rowData)}
+                                    tooltip="עריכה"
+                                    tooltipOptions={{ position: 'top' }}
+                                    style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }}
+                                />
+                                <Button
+                                    icon="pi pi-trash"
+                                    className="p-button-danger p-button-sm"
+                                    size="small"
+                                    onClick={() => handleDeleteClick(rowData)}
+                                    tooltip="מחיקה"
+                                    tooltipOptions={{ position: 'top' }}
+                                    style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }}
+                                />
+                            </div>
+                        )}
+                        headerStyle={{ textAlign: 'center' }}
+                        bodyStyle={{ textAlign: 'center' }}
+                        style={{ width: '10%' }}
                     />
+                    <Column field="donor" header="תורם" style={{ width: '10%'}} body={donorBodyTemplate} />
+                    <Column field="image" header="תמונה" style={{ width: '10%' }} body={imageBodyTemplate} />
+                    <Column field="subject" header="נושא" style={{ width: '15%' }} />
+                    <Column field="category" header="קטגוריה" style={{ width: '15%' }} body={categoryBodyTemplate} filter filterPlaceholder="חפש" sortable />
+                    <Column field="author" header="מחבר" style={{ width: '15%' }} filter filterPlaceholder="חפש" sortable />
+                    <Column field="name" header="שם ספר" style={{ width: '15%' }} filter filterPlaceholder="חפש" sortable />
+                    <Column field="code" header="קוד ספר" style={{ width: '10%' }} filter filterPlaceholder="חפש" sortable />
                 </DataTable>
             </div>
         </>

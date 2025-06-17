@@ -40,9 +40,9 @@ const bookApiSlice = apiSlice.injectEndpoints({
         }),
         updateBook: build.mutation({
             query: ({ id, ...book }) => ({
-                url: `/book`,
+                url: `book`,
                 method: 'PUT',
-                body: { id, ...book }
+                body: { id, book }
             }),
             invalidatesTags: (result, error, { id }) => [{ type: 'Book', id }]
         }),

@@ -144,34 +144,45 @@ const getBookByAuthor = async (req, res) => {
 }
 
 const updateBook = async (req, res) => {
-    try {
-        const { id, name, code, author, subject, category, notes, image } = req.body
-        if (!id) {
-            return res.status(400).json({ message: 'Book ID is required' })
-        }
-        
-        const book = await Book.findById(id).exec()
-        if (!book) {
-            return res.status(404).json({ message: 'Book not found' })
-        }
-        
-        book.name = name || book.name
-        book.code = code || book.code
-        book.author = author || book.author
-        book.subject = subject || book.subject
-        book.category = category || book.category
-        book.notes = notes || book.notes
-        book.image = image || book.image
+  try {
+    const {
+      id, name, code, author, subject, category, notes, donor
+    } = req.body;
 
-        const updatedBook = await book.save()
-        res.json({ 
-            message: `The details of '${updatedBook.name}' updated successfully`,
-            book: updatedBook
-        })
-    } catch (error) {
-        console.error('Error updating book:', error)
-        res.status(500).json({ message: 'Internal server error' })
+    const image = req.file ? req.file.filename : null;
+
+    if (!id) {
+      return res.status(400).json({ message: 'Book ID is required' });
     }
+
+    const book = await Book.findById(id).exec();
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+
+    book.name = name || book.name;
+    book.code = code || book.code;
+    book.author = author || book.author;
+    book.subject = subject || book.subject;
+    book.category = category || book.category;
+    book.notes = notes || book.notes;
+    book.donor = donor || book.donor;
+
+    if (image) {
+      book.image = image; 
+    }
+
+    const updatedBook = await book.save();
+
+    res.json({
+      message: `The details of '${updatedBook.name}' updated successfully`,
+      book: updatedBook
+    });
+
+  } catch (error) {
+    console.error('Error updating book:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 }
 
 const deleteBook = async (req, res) => {
