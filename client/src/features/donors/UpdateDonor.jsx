@@ -13,7 +13,6 @@ const UpdateDonor = ({ donor, onSuccess }) => {
     notes: ""
   });
 
-
   const [updateDonor, { isLoading }] = useUpdateDonorMutation();
 
   useEffect(() => {
@@ -40,16 +39,18 @@ const UpdateDonor = ({ donor, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const form = new FormData();
-    form.append("id", donor._id); 
-    form.append("name", formData.name);
-    form.append("email", formData.email);
-    form.append("numberPhone", formData.numberPhone);
-    form.append("commemoratesNames", formData.commemoratesNames);
-    form.append("notes", formData.notes);
+    // Send as regular JSON object, not FormData
+    const updateData = {
+      id: donor._id,
+      name: formData.name,
+      email: formData.email,
+      numberPhone: formData.numberPhone,
+      commemoratesNames: formData.commemoratesNames,
+      notes: formData.notes
+    };
 
     try {
-      await updateDonor(form).unwrap();
+      await updateDonor(updateData).unwrap();
       alert("התורם עודכן בהצלחה!");
       if (onSuccess) onSuccess();
     } catch (err) {
@@ -59,15 +60,67 @@ const UpdateDonor = ({ donor, onSuccess }) => {
   };
 
   return (
-    <div className="book-form" style={{ padding: '1rem' }}>
-      <h2>עדכון ספר</h2>
+    <div className="donor-form" style={{ padding: '1rem' }}>
+      <h2>עדכון תורם</h2>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <InputText name="name" value={formData.name} onChange={handleChange} placeholder="שם תורם" />
-        <InputText name="email" value={formData.email} onChange={handleChange} placeholder="כתובת מייל" />
-        <InputTextarea name="numberPhone" value={formData.numberPhone} onChange={handleChange} placeholder="מספר טלפון" />
-        <InputTextarea name="commemoratesNames" value={formData.commemoratesNames} onChange={handleChange} placeholder="שמות להנצחה" />
-        <InputTextarea name="notes" value={formData.notes} onChange={handleChange} placeholder="הערות" rows={3} />
-        <Button type="submit" label="עדכן תורם" icon="pi pi-save" loading={isLoading} className="p-button-warning" />
+        <div className="p-field">
+          <label htmlFor="name">שם תורם</label>
+          <InputText 
+            id="name" 
+            name="name" 
+            value={formData.name} 
+            onChange={handleChange} 
+            placeholder="שם תורם" 
+          />
+        </div>
+        <div className="p-field">
+          <label htmlFor="email">אימייל</label>
+          <InputText 
+            id="email" 
+            name="email" 
+            value={formData.email} 
+            onChange={handleChange} 
+            placeholder="כתובת מייל" 
+          />
+        </div>
+        <div className="p-field">
+          <label htmlFor="numberPhone">מספר טלפון</label>
+          <InputText 
+            id="numberPhone" 
+            name="numberPhone" 
+            value={formData.numberPhone} 
+            onChange={handleChange} 
+            placeholder="מספר טלפון" 
+          />
+        </div>
+        <div className="p-field">
+          <label htmlFor="commemoratesNames">שמות להנצחה</label>
+          <InputText 
+            id="commemoratesNames" 
+            name="commemoratesNames" 
+            value={formData.commemoratesNames} 
+            onChange={handleChange} 
+            placeholder="שמות להנצחה" 
+          />
+        </div>
+        <div className="p-field">
+          <label htmlFor="notes">הערות</label>
+          <InputTextarea 
+            id="notes" 
+            name="notes" 
+            value={formData.notes} 
+            onChange={handleChange} 
+            placeholder="הערות" 
+            rows={3} 
+          />
+        </div>
+        <Button 
+          type="submit" 
+          label="עדכן תורם" 
+          icon="pi pi-save" 
+          loading={isLoading} 
+          className="p-button-warning" 
+        />
       </form>
     </div>
   );
