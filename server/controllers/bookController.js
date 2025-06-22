@@ -9,14 +9,13 @@ const creatNewBook = async (req, res) => {
         if (!name || !code || !author || !subject || !category) {
             return res.status(400).json({ message: 'Required fields are missing' })
         }
-
-        // Check if book with same code already exists
+ 
         const existingBook = await Book.findOne({ code: parseInt(code) })
         if (existingBook) {
             return res.status(409).json({ message: 'Book with this code already exists' })
         }
 
-        const book = await Book.create({ 
+        const book = await Book.create({
             name, 
             code: parseInt(code), 
             author, 
@@ -24,7 +23,7 @@ const creatNewBook = async (req, res) => {
             category, 
             notes: notes || '', 
             image, 
-            donor: donor || null 
+            donor: donor || "לא נתרם" 
         })
         
         console.log('Book created successfully:', book);
@@ -145,17 +144,14 @@ const getBookByAuthor = async (req, res) => {
 
 const updateBook = async (req, res) => {
   try {
-    const {
-      id, name, code, author, subject, category, notes, donor
-    } = req.body;
-
+    const { id, name, code, author, subject, category, notes, donor } = req.body;
     const image = req.file ? req.file.filename : null;
 
     if (!id) {
       return res.status(400).json({ message: 'Book ID is required' });
     }
 
-    const book = await Book.findById(id).exec();
+    const book = await Book.findById(id);
     if (!book) {
       return res.status(404).json({ message: 'Book not found' });
     }
@@ -167,21 +163,13 @@ const updateBook = async (req, res) => {
     book.category = category || book.category;
     book.notes = notes || book.notes;
     book.donor = donor || book.donor;
+    if (image) book.image = image;
 
-    if (image) {
-      book.image = image; 
-    }
-
-    const updatedBook = await book.save();
-
-    res.json({
-      message: `The details of '${updatedBook.name}' updated successfully`,
-      book: updatedBook
-    });
-
+    const updated = await book.save();
+    res.json({ message: `Book '${updated.name}' updated successfully`, book: updated });
   } catch (error) {
-    console.error('Error updating book:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 }
 

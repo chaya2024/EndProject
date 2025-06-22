@@ -32,8 +32,7 @@ const bookSchema = new mongoose.Schema({
         required: false
     },
     donor: {
-        type: mongoose.ObjectId,
-        ref: 'Donor'
+        type: String
     }
 }, {
     timestamps: true
