@@ -10,9 +10,6 @@ const creatNewDonor = async (req, res) => {
 }
 const getAllDonors = async (req, res) => {
     const donors = await Donor.find().lean()
-    if (!donors?.length) {
-        return res.status(400).json({ message: 'No donors found' })
-    }
     res.json(donors)
 }
 const getDonorById = async (req, res) => {

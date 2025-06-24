@@ -12,6 +12,8 @@ import 'jspdf-autotable';
 
 const DonorsList = () => {
   const { data: donorsList = [], isLoading, isError, error, refetch } = useGetDonorsQuery();
+  console.log('donorsList:', donorsList);
+
   const [deleteDonor] = useDeleteDonorMutation();
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [selectedDonor, setSelectedDonor] = useState(null);

@@ -10,9 +10,6 @@ const creatNewBookNeeded = async (req, res) => {
 }
 const getAllBookNeeded = async (req, res) => {
     const booksNeeded = await BookNeeded.find().lean()
-    if (!booksNeeded?.length) {
-        return res.status(400).json({ message: 'No booksNeeded found' })
-    }
     res.json(booksNeeded)
 }
 const getBookNeededById = async (req, res) => {
