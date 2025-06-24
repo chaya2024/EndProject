@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useAddBookNeededMutation } from "./neededApiSlice";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { InputTextarea } from "primereact/inputtextarea";
 
 const AddBookNeeded = ({ onSuccess }) => {
   const [addBookList, { isLoading }] = useAddBookNeededMutation();
@@ -44,22 +43,13 @@ const AddBookNeeded = ({ onSuccess }) => {
     <div className="book-form" style={{ padding: '1rem' }}>
       <h2>הוספת ספר חדש</h2>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div className="p-field">
-          <label htmlFor="name">שם ספר</label>
-          <InputText id="name" name="name" value={formData.name} onChange={handleChange} required/>
-        </div>
-        <div className="p-field">
-          <label htmlFor="author">מחבר</label>
-          <InputText id="author" name="author" value={formData.author} onChange={handleChange} required/>
-        </div>
-        <div className="p-field">
-          <label htmlFor="price">מחיר</label>
-          <InputText id="price" name="price" value={formData.price} onChange={handleChange} required type="number"/>
-        </div>
+        <InputText name="name" value={formData.name} onChange={handleChange} placeholder="שם ספר" required />
+        <InputText name="author" value={formData.author} onChange={handleChange} placeholder="מחבר" required />
+        <InputText name="price" value={formData.price} onChange={handleChange} placeholder="מחיר" type="number" required />
 
         <Button
           type="submit"
-          label="הוסף תורם"
+          label="הוסף ספר"
           icon="pi pi-plus"
           loading={isLoading}
           className="p-button-success"
@@ -67,6 +57,6 @@ const AddBookNeeded = ({ onSuccess }) => {
       </form>
     </div>
   );
-}
+};
 
 export default AddBookNeeded;

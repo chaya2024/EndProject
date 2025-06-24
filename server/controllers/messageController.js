@@ -9,9 +9,6 @@ const creatNewMessage = async (req, res) => {
 }
 const getAllMessages = async (req, res) => {
     const message = await Message.find().lean()
-    if (!message?.length) {
-        return res.status(400).json({ message: 'No messages found' })
-    }
     res.json(message)
 }
 const getMessageById = async (req, res) => {

@@ -48,27 +48,11 @@ const AddDonor = ({ onSuccess }) => {
     <div className="donor-form" style={{ padding: '1rem' }}>
       <h2>הוספת תורם חדש</h2>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div className="p-field">
-          <label htmlFor="name">שם תורם</label>
-          <InputText id="name" name="name" value={formData.name} onChange={handleChange} />
-        </div>
-        <div className="p-field">
-          <label htmlFor="email">אימייל</label>
-          <InputText id="email" name="email" value={formData.email} onChange={handleChange} />
-        </div>
-        <div className="p-field">
-          <label htmlFor="subject">מספר טלפון</label>
-          <InputText id="numberPhone" name="numberPhone" value={formData.numberPhone} onChange={handleChange} />
-        </div>
-        <div className="p-field">
-          <label htmlFor="category">שמות להנצחה</label>
-          <InputText id="commemoratesNames" name="commemoratesNames" value={formData.commemoratesNames} onChange={handleChange} />
-
-        </div>
-        <div className="p-field">
-          <label htmlFor="notes">הערות</label>
-          <InputTextarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={3} />
-        </div>
+        <InputText name="name" value={formData.name} onChange={handleChange} placeholder="שם תורם" />
+        <InputText name="email" value={formData.email} onChange={handleChange} placeholder="אימייל" />
+        <InputText name="numberPhone" value={formData.numberPhone} onChange={handleChange} placeholder="מספר טלפון" />
+        <InputText name="commemoratesNames" value={formData.commemoratesNames} onChange={handleChange} placeholder="שמות להנצחה" />
+        <InputTextarea name="notes" value={formData.notes} onChange={handleChange} placeholder="הערות (לא חובה)" rows={3} />
 
         <Button
           type="submit"
@@ -80,6 +64,6 @@ const AddDonor = ({ onSuccess }) => {
       </form>
     </div>
   );
-}
+};
 
 export default AddDonor;
