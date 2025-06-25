@@ -12,8 +12,6 @@ import 'jspdf-autotable';
 
 const BookNeededList = () => {
   const { data: bookNeededList = [], isLoading, isError, error, refetch } = useGetBookNeededQuery();
-  console.log('bookNeededList:', bookNeededList);
-
   const [deleteBookNeeded] = useDeleteBookNeededMutation();
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
@@ -51,6 +49,23 @@ const BookNeededList = () => {
     }
   };
 
+  const priceFilterTemplate = (options) => {
+    const [min, max] = options.value || [null, null];
+
+    const updateFilter = (val, index) => {
+      const newRange = [...(options.value || [null, null])];
+      newRange[index] = val;
+      options.filterCallback(newRange);
+    };
+
+    return (
+      <div className="flex gap-2">
+        <input type="number" value={min || ''} onChange={(e) => updateFilter(+e.target.value, 0)} placeholder="מינ'" />
+        <input type="number" value={max || ''} onChange={(e) => updateFilter(+e.target.value, 1)} placeholder="מקס'" />
+      </div>
+    );
+  };
+
   if (isLoading) return <div style={{ textAlign: 'center', padding: '2rem' }}>טוען...</div>;
   if (isError) return <div style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>שגיאה: {error?.message || 'שגיאה לא ידועה'}</div>;
 
@@ -76,15 +91,27 @@ const BookNeededList = () => {
         </div>
 
         <DataTable value={bookNeededList} paginator rows={10} dataKey="_id" emptyMessage="לא נמצאו ספרים" responsiveLayout="scroll">
-          <Column header="פעולות" body={(rowData) => (
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedBook(rowData)} tooltip="עריכה" />
-              <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" />
-            </div>
-          )} style={{ width: '10%' }} />
+          <Column
+            header="פעולות"
+            body={(rowData) => (
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedBook(rowData)} tooltip="עריכה" />
+                <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" />
+              </div>
+            )}
+            style={{ width: '10%' }}
+          />
           <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
-          <Column field="author" header="מחבר" />
-          <Column field="price" header="מחיר" />
+          <Column field="author" header="מחבר" filter filterPlaceholder="חפש" sortable />
+          <Column
+            field="price"
+            header="מחיר"
+            sortable
+            filter
+            filterField="price"
+            dataType="numeric"
+            filterElement={priceFilterTemplate}
+          />
         </DataTable>
       </div>
     </>
