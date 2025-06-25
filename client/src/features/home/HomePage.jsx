@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Home() {
+export default function HomePage() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -55,7 +55,7 @@ export default function Home() {
 
     const modules = [
         { name: "ספרים", path: "/books", color: "bg-green-100", border: "border-green-500" },
-        { name: "ספרים לקניה", path: "/books-for-sale", color: "bg-blue-100", border: "border-blue-500" },
+        { name: "ספרים לקניה", path: "/booksNeeded", color: "bg-blue-100", border: "border-blue-500" },
         { name: "תורמים", path: "/donors", color: "bg-purple-100", border: "border-purple-500" },
         { name: "הודעות ופניות", path: "/messages", color: "bg-orange-100", border: "border-orange-500" }
     ];

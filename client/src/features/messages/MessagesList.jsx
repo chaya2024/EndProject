@@ -15,13 +15,12 @@ const MessageList = () => {
 
   const [deleteMessage] = useDeleteMessageMutation();
   const [visibleAdd, setVisibleAdd] = useState(false);
-  const [selectedMessage, setSelectedMessage] = useState(null);
 
   const exportExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(messagesList);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Messages');
-    XLSX.writeFile(workbook, 'mmessage.xlsx');
+    XLSX.writeFile(workbook, 'messages.xlsx');
   };
 
   const exportPdf = () => {
@@ -40,7 +39,7 @@ const MessageList = () => {
   };
 
   const handleDeleteClick = async (message) => {
-    if (window.confirm(`האם למחוק את ההודעה "${message.name}"?`)) {
+    if (window.confirm(`האם למחוק את ההודעה מ"${message.name}"?`)) {
       try {
         await deleteMessage(message._id).unwrap();
         refetch();
@@ -81,7 +80,7 @@ const MessageList = () => {
           <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
           <Column field="subject" header="נושא" />
           <Column field="detail" header="פירוט" />
-          <Column field="numbberPhone" header="מספר טלפון" />
+          <Column field="numberPhone" header="מספר טלפון" />
           <Column field="notes" header="הערות" />
         </DataTable>
       </div>
