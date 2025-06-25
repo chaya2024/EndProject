@@ -17,13 +17,13 @@ export default function HomePage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
+        const endpoint = isLogin ? "http://localhost:1234/auth/login" : "http://localhost:1234/auth/register";
 
         try {
             const res = await fetch(endpoint, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({ name: formData.username, password: formData.password })
             });
 
             if (res.ok) {
@@ -39,7 +39,8 @@ export default function HomePage() {
                 setShowModal(false);
                 setFormData({ username: "", password: "" });
             } else {
-                alert("פעולה נכשלה");
+                const errorData = await res.json();
+                alert("פעולה נכשלה: " + (errorData.message || "שגיאה לא ידועה"));
             }
         } catch (err) {
             console.error(err);

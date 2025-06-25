@@ -13,8 +13,8 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <Router>
+    <Router>
+      <div className="App">
         <Navbar />
         <div className="p-4">
           <Routes>
@@ -26,8 +26,8 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
-      </Router>
-    </div>
+      </div>
+    </Router>
   );
 }
 
