@@ -60,7 +60,7 @@ export default function HomePage() {
         { name: "תורמים", path: "/donors", color: "bg-purple-100", border: "border-purple-500" },
         { name: "הודעות ופניות", path: "/messages", color: "bg-orange-100", border: "border-orange-500" }
     ];
-
+    
     return (
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-6 text-center">ניהול המערכת</h1>

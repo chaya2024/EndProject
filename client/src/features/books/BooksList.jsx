@@ -79,7 +79,7 @@ const BooksList = () => {
 
     const donorBodyTemplate = (rowData) => (
         rowData.donor ?
-            <Tag value={`התורם: ${rowData.donor}`} severity="success" style={{ backgroundColor: '#ffff', color: 'black' }} /> :
+            <Tag value={`${rowData.donor}`} severity="success" style={{ backgroundColor: '#ffff', color: 'black' }} /> :
             <Tag value="לא נתרם" severity="secondary" style={{ backgroundColor: '#ffff', color: 'black' }} />
     );
 
