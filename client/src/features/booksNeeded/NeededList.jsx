@@ -9,17 +9,19 @@ import UpdateBookNeeded from './UpdateNeeded';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { useSelector } from 'react-redux';
 
 const BookNeededList = () => {
   const { data: bookNeededList = [], isLoading, isError, error, refetch } = useGetBookNeededQuery();
   const [deleteBookNeeded] = useDeleteBookNeededMutation();
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const { isUserLoggedIn } = useSelector((state) => state.auth);
 
   const exportExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(bookNeededList);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Donors');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'BookNeeded');
     XLSX.writeFile(workbook, 'bookNeeded.xlsx');
   };
 
@@ -27,19 +29,19 @@ const BookNeededList = () => {
     const doc = new jsPDF();
     doc.text('רשימת ספרים דרושים', 14, 16);
     const tableColumn = ['שם', 'מחבר', 'מחיר'];
-    const tableRows = bookNeededList.map((bookNeeded) => [
-      bookNeeded.name,
-      bookNeeded.author,
-      bookNeeded.price
+    const tableRows = bookNeededList.map((book) => [
+      book.name,
+      book.author,
+      book.price
     ]);
     doc.autoTable({ head: [tableColumn], body: tableRows, startY: 20 });
     doc.save('ספרים דרושים.pdf');
   };
 
-  const handleDeleteClick = async (bookNeeded) => {
-    if (window.confirm(`האם למחוק את הספר "${bookNeeded.name}"?`)) {
+  const handleDeleteClick = async (book) => {
+    if (window.confirm(`האם למחוק את הספר "${book.name}"?`)) {
       try {
-        await deleteBookNeeded(bookNeeded._id).unwrap();
+        await deleteBookNeeded(book._id).unwrap();
         refetch();
         alert('הספר נמחק בהצלחה');
       } catch (err) {
@@ -87,22 +89,22 @@ const BookNeededList = () => {
             <Button icon="pi pi-file-excel" onClick={exportExcel} tooltip="ייצוא לאקסל" />
             <Button icon="pi pi-file-pdf" onClick={exportPdf} tooltip="ייצוא ל-PDF" />
           </div>
-          <Button icon="pi pi-plus" label="הוספת ספר" onClick={() => setVisibleAdd(true)} />
+          {isUserLoggedIn && <Button icon="pi pi-plus" label="הוספת ספר" onClick={() => setVisibleAdd(true)} />}
         </div>
 
         <DataTable value={bookNeededList} paginator rows={10} dataKey="_id" emptyMessage="לא נמצאו ספרים" responsiveLayout="scroll">
-          <Column
+          {isUserLoggedIn && <Column
             header="פעולות"
             body={(rowData) => (
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedBook(rowData)} tooltip="עריכה" />
-                <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" />
+                {isUserLoggedIn && <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedBook(rowData)} tooltip="עריכה" />}
+                {isUserLoggedIn && <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" />}
               </div>
             )}
             style={{ width: '10%' }}
-          />
+          />}
           <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
-          <Column field="author" header="מחבר" filter filterPlaceholder="חפש" sortable />
+          <Column field="author" header="מחבר" sortable filter filterPlaceholder="חפש לפי מחבר" />
           <Column
             field="price"
             header="מחיר"
@@ -114,6 +116,9 @@ const BookNeededList = () => {
           />
         </DataTable>
       </div>
+      <Button
+        icon="pi pi-refresh" className="p-button-secondary" tooltip="טען" tooltipOptions={{ position: 'top' }} style={{ backgroundColor: '#FFFF', borderColor: '#FFFF', color: 'BLACK' }} size="small" onClick={refetch}
+      />
     </>
   );
 };

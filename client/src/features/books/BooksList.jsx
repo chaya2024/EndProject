@@ -10,6 +10,8 @@ import 'jspdf-autotable';
 import AddBook from './AddBook';
 import UpdateBook from './UpdateBook';
 import { Dialog } from 'primereact/dialog';
+import Login from '../auth/Login';
+import { useSelector, useDispatch } from 'react-redux';
 
 const categoryColors = {
     'תנ"ך ומפרשיו': '#A5D6A7',
@@ -32,6 +34,9 @@ const BooksList = () => {
     const [deleteBook] = useDeleteBookMutation();
     const [visibleAdd, setVisibleAdd] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
+    const { isUserLoggedIn } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
+
 
     const exportExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(booksList);
@@ -110,25 +115,23 @@ const BooksList = () => {
             </Dialog>
 
             <div className="card" style={{ padding: '1rem' }}>
-                <h2 style={{ fontFamily: "Secular One" }}>ספריית מתן נחליאל</h2>
-
                 <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <Button icon="pi pi-file-excel" severity="success" rounded onClick={exportExcel} tooltip="Excel" tooltipOptions={{ position: 'top' }} style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
                         <Button icon="pi pi-file-pdf" severity="warning" rounded onClick={exportPdf} tooltip="PDF" tooltipOptions={{ position: 'top' }} style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />
                     </div>
                     <div>
-                        <Button icon="pi pi-plus" className="p-button-success" tooltip="הוספת ספר" onClick={() => setVisibleAdd(true)} tooltipOptions={{ position: 'left' }} style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
+                        {isUserLoggedIn && <Button icon="pi pi-plus" className="p-button-success" tooltip="הוספת ספר" onClick={() => setVisibleAdd(true)} tooltipOptions={{ position: 'left' }} style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />}
                     </div>
                 </div>
 
                 <DataTable value={booksList} paginator rows={10} dataKey="_id" filterDisplay="row" emptyMessage="לא נמצאו ספרים" responsiveLayout="scroll">
-                    <Column header="פעולות" body={(rowData) => (
+                    {isUserLoggedIn && <Column header="פעולות" body={(rowData) => (
                         <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem" }}>
-                            <Button icon="pi pi-pencil" className="p-button-warning" size="small" onClick={() => setSelectedBook(rowData)} tooltipOptions={{ position: 'top' }} tooltip="עריכה"  style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />
-                            <Button icon="pi pi-trash" className="p-button-danger p-button-sm" size="small" onClick={() => handleDeleteClick(rowData)} tooltipOptions={{ position: 'top' }} tooltip="מחיקה" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
+                            {isUserLoggedIn && <Button icon="pi pi-pencil" className="p-button-warning" size="small" onClick={() => setSelectedBook(rowData)} tooltipOptions={{ position: 'top' }} tooltip="עריכה"  style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />}
+                            {isUserLoggedIn && <Button icon="pi pi-trash" className="p-button-danger p-button-sm" size="small" onClick={() => handleDeleteClick(rowData)} tooltipOptions={{ position: 'top' }} tooltip="מחיקה" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />}
                         </div>
-                    )} style={{ width: '10%' }} />
+                    )} style={{ width: '10%' }} />}
                     <Column field="donor" header="תורם" style={{ width: '10%' }} body={donorBodyTemplate} />
                     <Column field="image" header="תמונה" style={{ width: '10%' }} body={imageBodyTemplate} />
                     <Column field="subject" header="נושא" style={{ width: '15%' }} />
