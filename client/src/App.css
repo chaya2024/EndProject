@@ -37,50 +37,74 @@
   }
 }
 
-/* Minimal Navbar Styles */
-.navbar-minimal {
-  background: #ffffff;
-  border-bottom: 1px solid #f3f4f6;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+/* Enhanced Navbar Styles */
+.navbar-glass {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.nav-link-minimal {
-  color: #6b7280;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
+/* Smooth hover animations */
+.nav-item-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav-link-minimal:hover {
-  color: #111827;
-  background-color: #f9fafb;
+.nav-item-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-.nav-link-active-minimal {
-  color: #111827;
-  background-color: #f3f4f6;
+/* Gradient text effect */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Clean hover effects */
-.hover-lift:hover {
-  transform: translateY(-1px);
-  transition: transform 0.2s ease-in-out;
+/* Active link indicator */
+.active-indicator {
+  position: relative;
 }
 
-/* Subtle focus styles */
-.focus-minimal:focus {
-  outline: 2px solid #e5e7eb;
-  outline-offset: 2px;
+.active-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
 }
 
-/* Mobile menu animations */
-.mobile-menu-slide {
-  animation: slideDown 0.2s ease-out;
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateX(-50%) scale(1.2);
+  }
+}
+
+/* Mobile menu animation */
+.mobile-menu-enter {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+.mobile-menu-exit {
+  animation: slideUp 0.3s ease-out forwards;
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -88,24 +112,89 @@
   }
 }
 
-/* RTL Support for minimal design */
-[dir="rtl"] .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 1;
-  margin-right: calc(2rem * var(--tw-space-x-reverse));
-  margin-left: calc(2rem * calc(1 - var(--tw-space-x-reverse)));
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
 
-/* Clean typography */
-.text-minimal {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  letter-spacing: -0.025em;
+/* User avatar glow effect */
+.user-avatar {
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+  transition: box-shadow 0.3s ease;
 }
 
-/* Subtle shadows */
-.shadow-minimal {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+.user-avatar:hover {
+  box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
 }
 
-.shadow-minimal-hover:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .mobile-nav-item {
+    animation: fadeInUp 0.3s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .mobile-nav-item:nth-child(1) { animation-delay: 0.1s; }
+  .mobile-nav-item:nth-child(2) { animation-delay: 0.2s; }
+  .mobile-nav-item:nth-child(3) { animation-delay: 0.3s; }
+  .mobile-nav-item:nth-child(4) { animation-delay: 0.4s; }
+  .mobile-nav-item:nth-child(5) { animation-delay: 0.5s; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RTL specific enhancements */
+[dir="rtl"] .nav-link {
+  text-align: right;
+}
+
+[dir="rtl"] .mobile-menu {
+  right: 0;
+  left: auto;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .navbar-glass {
+    background: rgba(17, 24, 39, 0.95);
+    border-bottom: 1px solid rgba(55, 65, 81, 0.3);
+  }
+}
+
+/* Accessibility improvements */
+.nav-link:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Loading skeleton for better UX */
+.nav-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
