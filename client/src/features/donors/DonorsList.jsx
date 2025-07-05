@@ -67,28 +67,26 @@ const DonorsList = () => {
       </Dialog>
 
       <div className="card" style={{ padding: '1rem' }}>
-        <h2 style={{ fontFamily: 'Secular One' }}>רשימת תורמים</h2>
-
         <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <Button icon="pi pi-file-excel" onClick={exportExcel} tooltip="ייצוא לאקסל" />
-            <Button icon="pi pi-file-pdf" onClick={exportPdf} tooltip="ייצוא ל-PDF" />
+            <Button icon="pi pi-file-excel" onClick={exportExcel} tooltip="ייצוא לאקסל" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
+            <Button icon="pi pi-file-pdf" onClick={exportPdf} tooltip="ייצוא ל-PDF" style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />
           </div>
-          <Button icon="pi pi-plus" label="הוספת תורם" onClick={() => setVisibleAdd(true)} />
+          <Button icon="pi pi-plus" tooltip="הוספת תורם" onClick={() => setVisibleAdd(true)} style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
         </div>
 
         <DataTable value={donorsList} paginator rows={10} dataKey="_id" emptyMessage="לא נמצאו תורמים" responsiveLayout="scroll">
           <Column header="פעולות" body={(rowData) => (
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedDonor(rowData)} tooltip="עריכה" />
-              <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" />
+              <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedDonor(rowData)} tooltip="עריכה" style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />
+              <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
             </div>
           )} style={{ width: '10%' }} />
-          <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
+          <Column field="notes" header="הערות" />
+          <Column field="commemoratesNames" header="שמות להנצחה" />
           <Column field="email" header="אימייל" />
           <Column field="numberPhone" header="טלפון" />
-          <Column field="commemoratesNames" header="שמות להנצחה" />
-          <Column field="notes" header="הערות" />
+          <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
         </DataTable>
       </div>
     </>

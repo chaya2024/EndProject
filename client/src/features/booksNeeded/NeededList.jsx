@@ -82,14 +82,12 @@ const BookNeededList = () => {
       </Dialog>
 
       <div className="card" style={{ padding: '1rem' }}>
-        <h2 style={{ fontFamily: 'Secular One' }}>רשימת ספרים דרושים</h2>
-
         <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <Button icon="pi pi-file-excel" onClick={exportExcel} tooltip="ייצוא לאקסל" />
-            <Button icon="pi pi-file-pdf" onClick={exportPdf} tooltip="ייצוא ל-PDF" />
+            <Button icon="pi pi-file-excel" onClick={exportExcel} tooltip="ייצוא לאקסל" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
+            <Button icon="pi pi-file-pdf" onClick={exportPdf} tooltip="ייצוא ל-PDF" style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />
           </div>
-          {isUserLoggedIn && <Button icon="pi pi-plus" label="הוספת ספר" onClick={() => setVisibleAdd(true)} />}
+          {isUserLoggedIn && <Button icon="pi pi-plus" tooltip="הוספת ספר" onClick={() => setVisibleAdd(true)} modal style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />}
         </div>
 
         <DataTable value={bookNeededList} paginator rows={10} dataKey="_id" emptyMessage="לא נמצאו ספרים" responsiveLayout="scroll">
@@ -97,14 +95,12 @@ const BookNeededList = () => {
             header="פעולות"
             body={(rowData) => (
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {isUserLoggedIn && <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedBook(rowData)} tooltip="עריכה" />}
-                {isUserLoggedIn && <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" />}
+                {isUserLoggedIn && <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedBook(rowData)} tooltip="עריכה" style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />}
+                {isUserLoggedIn && <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />}
               </div>
             )}
             style={{ width: '10%' }}
           />}
-          <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
-          <Column field="author" header="מחבר" sortable filter filterPlaceholder="חפש לפי מחבר" />
           <Column
             field="price"
             header="מחיר"
@@ -114,6 +110,8 @@ const BookNeededList = () => {
             dataType="numeric"
             filterElement={priceFilterTemplate}
           />
+          <Column field="author" header="מחבר" sortable filter filterPlaceholder="חפש לפי מחבר" />
+          <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
         </DataTable>
       </div>
       <Button
