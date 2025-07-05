@@ -8,11 +8,11 @@ import AddMessage from './AddMessage';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { useSelector } from 'react-redux';
 
 const MessageList = () => {
-  const { data: messagesList = [], isLoading, isError, error, refetch } = useGetMessageQuery();
-  console.log('messageList:', messagesList);
-
+  const { isUserLoggedIn } = useSelector((state) => state.auth);
+  const { data: messagesList = [], isLoading, isError, error, refetch } = useGetMessageQuery(undefined, { skip: !isUserLoggedIn });
   const [deleteMessage] = useDeleteMessageMutation();
   const [visibleAdd, setVisibleAdd] = useState(false);
 
@@ -51,36 +51,105 @@ const MessageList = () => {
     }
   };
 
-  if (isLoading) return <div style={{ textAlign: 'center', padding: '2rem' }}>טוען...</div>;
-  if (isError) return <div style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>שגיאה: {error?.message || 'שגיאה לא ידועה'}</div>;
+  if (isLoading) {
+    return <div style={{ textAlign: 'center', padding: '2rem' }}>טוען...</div>;
+  }
+
+  if (isError) {
+    return (
+      <div style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>
+        שגיאה: {error?.message || 'שגיאה לא ידועה'}
+      </div>
+    );
+  }
 
   return (
     <>
-      <Dialog header="שליחת הודעה לספרן" visible={visibleAdd} onHide={() => setVisibleAdd(false)} modal style={{ width: '40vw' }}>
+      <Dialog
+        header="שליחת הודעה לספרן"
+        visible={visibleAdd}
+        onHide={() => setVisibleAdd(false)}
+        modal
+        style={{ width: '40vw' }}
+      >
         <AddMessage onSuccess={() => { setVisibleAdd(false); refetch(); }} />
       </Dialog>
 
       <div className="card" style={{ padding: '1rem' }}>
-        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <Button icon="pi pi-file-excel" onClick={exportExcel} tooltip="ייצוא לאקסל" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
-            <Button icon="pi pi-file-pdf" onClick={exportPdf} tooltip="ייצוא ל-PDF" style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />
-          </div>
-          <Button icon="pi pi-plus" tooltip="שליחת הודעה חדשה" onClick={() => setVisibleAdd(true)} tooltipOptions={{ position: 'left' }} style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
+        {/* שורת כפתורים */}
+        <div
+          style={{
+            marginBottom: '1rem',
+            display: 'flex',
+            justifyContent: 'flex-start',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
+          }}
+        >
+          {/* כפתור הפלוס – תמיד */}
+          <Button
+            icon="pi pi-plus"
+            tooltip="שליחת הודעה חדשה"
+            onClick={() => setVisibleAdd(true)}
+            tooltipOptions={{ position: 'left' }}
+            style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }}
+          />
+
+          {/* כפתורי ייצוא – רק אם מחובר */}
+          {isUserLoggedIn && (
+            <>
+              <Button
+                icon="pi pi-file-excel"
+                onClick={exportExcel}
+                tooltip="ייצוא לאקסל"
+                style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }}
+              />
+              <Button
+                icon="pi pi-file-pdf"
+                onClick={exportPdf}
+                tooltip="ייצוא ל-PDF"
+                style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }}
+              />
+            </>
+          )}
         </div>
 
-        <DataTable value={messagesList} paginator rows={10} dataKey="_id" emptyMessage="לא התקבלו הודעות" responsiveLayout="scroll">
-          <Column header="פעולות" body={(rowData) => (
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
-            </div>
-          )} style={{ width: '10%' }} />
-          <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
-          <Column field="subject" header="נושא" />
-          <Column field="detail" header="פירוט" />
-          <Column field="numberPhone" header="מספר טלפון" />
-          <Column field="notes" header="הערות" />
-        </DataTable>
+        {/* טבלה או הודעה על התחברות */}
+        {isUserLoggedIn ? (
+          <DataTable
+            value={messagesList}
+            paginator
+            rows={10}
+            dataKey="_id"
+            emptyMessage="לא התקבלו הודעות"
+            responsiveLayout="scroll"
+          >
+            <Column
+              header="פעולות"
+              body={(rowData) => (
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <Button
+                    icon="pi pi-trash"
+                    className="p-button-sm p-button-danger"
+                    onClick={() => handleDeleteClick(rowData)}
+                    tooltip="מחיקה"
+                    style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }}
+                  />
+                </div>
+              )}
+              style={{ width: '10%' }}
+            />
+            <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
+            <Column field="subject" header="נושא" />
+            <Column field="detail" header="פירוט" />
+            <Column field="numberPhone" header="מספר טלפון" />
+            <Column field="notes" header="הערות" />
+          </DataTable>
+        ) : (
+          <div style={{ textAlign: 'center', color: 'gray', marginTop: '2rem' }}>
+            עליך להתחבר כדי לצפות ברשימת ההודעות
+          </div>
+        )}
       </div>
     </>
   );

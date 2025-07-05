@@ -9,6 +9,8 @@ import UpdateDonor from './UpdateDonor';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import Login from '../auth/Login';
+import { useSelector, useDispatch } from 'react-redux';
 
 const DonorsList = () => {
   const { data: donorsList = [], isLoading, isError, error, refetch } = useGetDonorsQuery();
@@ -17,6 +19,8 @@ const DonorsList = () => {
   const [deleteDonor] = useDeleteDonorMutation();
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [selectedDonor, setSelectedDonor] = useState(null);
+  const { isUserLoggedIn } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const exportExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(donorsList);
@@ -72,16 +76,16 @@ const DonorsList = () => {
             <Button icon="pi pi-file-excel" onClick={exportExcel} tooltip="ייצוא לאקסל" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
             <Button icon="pi pi-file-pdf" onClick={exportPdf} tooltip="ייצוא ל-PDF" style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />
           </div>
-          <Button icon="pi pi-plus" tooltip="הוספת תורם" onClick={() => setVisibleAdd(true)} style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
+          {isUserLoggedIn && <Button icon="pi pi-plus" tooltip="הוספת תורם" onClick={() => setVisibleAdd(true)} style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />}
         </div>
 
         <DataTable value={donorsList} paginator rows={10} dataKey="_id" emptyMessage="לא נמצאו תורמים" responsiveLayout="scroll">
-          <Column header="פעולות" body={(rowData) => (
+          {isUserLoggedIn && <Column header="פעולות" body={(rowData) => (
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedDonor(rowData)} tooltip="עריכה" style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />
               <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
             </div>
-          )} style={{ width: '10%' }} />
+          )} style={{ width: '10%' }} />}
           <Column field="notes" header="הערות" />
           <Column field="commemoratesNames" header="שמות להנצחה" />
           <Column field="email" header="אימייל" />

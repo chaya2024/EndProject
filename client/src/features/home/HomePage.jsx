@@ -29,14 +29,6 @@ export default function HomePage() {
         setShowRegisterModal(false);
         setShowLoginModal(true);
     };
-
-    const modules = [
-        { name: "ספרים", path: "/books", color: "bg-green-100", border: "border-green-500" },
-        { name: "ספרים לקניה", path: "/booksNeeded", color: "bg-blue-100", border: "border-blue-500" },
-        { name: "תורמים", path: "/donors", color: "bg-purple-100", border: "border-purple-500" },
-        { name: "הודעות ופניות", path: "/messages", color: "bg-orange-100", border: "border-orange-500" }
-    ];
-    
     return (
         <>
             <Dialog 
@@ -91,18 +83,6 @@ export default function HomePage() {
                             />
                         </div>
                     )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {modules.map((mod) => (
-                        <div
-                            key={mod.path}
-                            className={`cursor-pointer ${mod.color} ${mod.border} border-2 rounded-lg shadow-md p-6 flex flex-col items-center hover:shadow-lg transition duration-300`}
-                            onClick={() => navigate(mod.path)}
-                        >
-                            <h2 className="text-xl font-semibold">{mod.name}</h2>
-                        </div>
-                    ))}
                 </div>
             </div>
         </>

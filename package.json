@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@reduxjs/toolkit": "^2.8.2",
-    "primereact": "^10.9.5",
-    "react-redux": "^9.2.0"
-  }
-}
