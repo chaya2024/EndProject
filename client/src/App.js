@@ -14,9 +14,11 @@ import './App.css';
 function App() {
   return (
     <Router>
-      <div className="App">
+      <div className="App flex flex-col min-h-screen">
         <Navbar />
-        <div className="p-4">
+
+        {/* תוכן העמודים */}
+        <div className="flex-grow px-4 py-6 max-w-6xl mx-auto w-full">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/books" element={<BooksList />} />
@@ -26,9 +28,15 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
+
+        {/* פוטר: שורת תחתית קבועה */}
+        <footer className="border-t border-gray-200 text-center text-gray-400 text-sm py-3 select-none tracking-wide font-light">
+          ספריית מתן נחליאל &copy; {new Date().getFullYear()}
+        </footer>
       </div>
     </Router>
   );
 }
+
 
 export default App;

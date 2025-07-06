@@ -151,6 +151,9 @@ const MessageList = () => {
           </div>
         )}
       </div>
+      <Button
+        icon="pi pi-refresh" className="p-button-secondary" tooltip="טען" tooltipOptions={{ position: 'top' }} style={{ backgroundColor: '#FFFF', borderColor: '#FFFF', color: 'BLACK' }} size="small" onClick={refetch}
+      />
     </>
   );
 };

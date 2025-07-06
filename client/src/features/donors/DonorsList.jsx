@@ -86,13 +86,16 @@ const DonorsList = () => {
               <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />
             </div>
           )} style={{ width: '10%' }} />}
-          <Column field="notes" header="הערות" />
-          <Column field="commemoratesNames" header="שמות להנצחה" />
-          <Column field="email" header="אימייל" />
-          <Column field="numberPhone" header="טלפון" />
           <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
+          <Column field="numberPhone" header="טלפון" />
+          <Column field="email" header="אימייל" />
+          <Column field="commemoratesNames" header="שמות להנצחה" />
+          <Column field="notes" header="הערות" />
         </DataTable>
       </div>
+      <Button
+        icon="pi pi-refresh" className="p-button-secondary" tooltip="טען" tooltipOptions={{ position: 'top' }} style={{ backgroundColor: '#FFFF', borderColor: '#FFFF', color: 'BLACK' }} size="small" onClick={refetch}
+      />
     </>
   );
 };

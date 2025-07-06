@@ -101,6 +101,8 @@ const BookNeededList = () => {
             )}
             style={{ width: '10%' }}
           />}
+          <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
+          <Column field="author" header="מחבר" sortable filter filterPlaceholder="חפש לפי מחבר" />
           <Column
             field="price"
             header="מחיר"
@@ -110,8 +112,6 @@ const BookNeededList = () => {
             dataType="numeric"
             filterElement={priceFilterTemplate}
           />
-          <Column field="author" header="מחבר" sortable filter filterPlaceholder="חפש לפי מחבר" />
-          <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
         </DataTable>
       </div>
       <Button

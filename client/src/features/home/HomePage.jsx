@@ -30,61 +30,30 @@ export default function HomePage() {
         setShowLoginModal(true);
     };
     return (
-        <>
-            <Dialog 
-                header="התחברות" 
-                visible={showLoginModal} 
-                onHide={() => setShowLoginModal(false)} 
-                modal 
-                style={{ width: '400px' }}
-            >
-                <Login onSuccess={handleLoginSuccess} />
-            </Dialog>
+  <>
+    <Dialog
+      header="הרשמה"
+      visible={showRegisterModal}
+      onHide={() => setShowRegisterModal(false)}
+      modal
+      style={{ width: '400px' }}
+    >
+      <Register onSuccess={handleRegisterSuccess} />
+    </Dialog>
 
-            <Dialog 
-                header="הרשמה" 
-                visible={showRegisterModal} 
-                onHide={() => setShowRegisterModal(false)} 
-                modal 
-                style={{ width: '400px' }}
-            >
-                <Register onSuccess={handleRegisterSuccess} />
-            </Dialog>
-
-            <div className="p-8">
-                <h1 className="text-3xl font-bold mb-6 text-center">ניהול המערכת</h1>
-
-                <div className="flex justify-center mb-6 gap-4">
-                    {!isUserLoggedIn ? (
-                        <>
-                            <Button
-                                label="התחברות"
-                                icon="pi pi-sign-in"
-                                className="p-button-info"
-                                onClick={() => setShowLoginModal(true)}
-                            />
-                            <Button
-                                label="הרשמה"
-                                icon="pi pi-user-plus"
-                                className="p-button-success"
-                                onClick={() => setShowRegisterModal(true)}
-                            />
-                        </>
-                    ) : (
-                        <div className="flex items-center gap-4">
-                            <span className="text-lg font-semibold">
-                                שלום, {name || username}!
-                            </span>
-                            <Button
-                                label="התנתקות"
-                                icon="pi pi-sign-out"
-                                className="p-button-danger"
-                                onClick={handleLogout}
-                            />
-                        </div>
-                    )}
-                </div>
-            </div>
-        </>
-    );
+    <div className="p-8">
+      <div className="flex justify-center mb-6 gap-4">
+        {isUserLoggedIn && (
+          <Button
+            label="רישום לצוות הספריה"
+            icon="pi pi-user-plus"
+            className="p-button-success"
+            onClick={() => setShowRegisterModal(true)}
+          />
+        )}
+      </div>
+    </div>
+  </>
+);
 }
+
