@@ -125,21 +125,20 @@ const BooksList = () => {
                     </div>
                 </div>
 
-                <DataTable value={booksList} paginator rows={10} dataKey="_id" filterDisplay="row" emptyMessage="לא נמצאו ספרים" responsiveLayout="scroll">
+                <DataTable value={booksList} className='text-left' paginator rows={10} dataKey="_id" filterDisplay="row" emptyMessage="לא נמצאו ספרים" responsiveLayout="scroll">
+                    <Column field="code" header="קוד ספר" style={{ width: '10%' }} filter filterPlaceholder="חפש" sortable />
+                    <Column field="name" header="שם ספר" style={{ width: '15%' }} filter filterPlaceholder="חפש" sortable />
+                    <Column field="author" header="מחבר" style={{ width: '15%' }} filter filterPlaceholder="חפש" sortable />
+                    <Column field="category" header="קטגוריה" style={{ width: '15%' }} body={categoryBodyTemplate} filter filterPlaceholder="חפש" sortable />
+                    <Column field="subject" header="נושא" style={{ width: '15%' }} headerClassName="text-left" body={(rowData) => <div className="text-left">{rowData.subject}</div>} />
+                    <Column field="image" header="תמונה" style={{ width: '10%' }} body={imageBodyTemplate} />
+                    <Column field="donor" header="תורם" style={{ width: '10%' }} body={donorBodyTemplate} />
                     {isUserLoggedIn && <Column header="פעולות" body={(rowData) => (
                         <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem" }}>
                             {isUserLoggedIn && <Button icon="pi pi-pencil" className="p-button-warning" size="small" onClick={() => setSelectedBook(rowData)} tooltipOptions={{ position: 'top' }} tooltip="עריכה" style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />}
                             {isUserLoggedIn && <Button icon="pi pi-trash" className="p-button-danger p-button-sm" size="small" onClick={() => handleDeleteClick(rowData)} tooltipOptions={{ position: 'top' }} tooltip="מחיקה" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />}
                         </div>
                     )} style={{ width: '10%' }} />}
-                    <Column field="code" header="קוד ספר" style={{ width: '10%' }} filter filterPlaceholder="חפש" sortable />
-                    <Column field="name" header="שם ספר" style={{ width: '15%' }} filter filterPlaceholder="חפש" sortable />
-                    <Column field="author" header="מחבר" style={{ width: '15%' }} filter filterPlaceholder="חפש" sortable />
-                    <Column field="category" header="קטגוריה" style={{ width: '15%' }} body={categoryBodyTemplate} filter filterPlaceholder="חפש" sortable />
-                    <Column field="subject" header="נושא" style={{ width: '15%' }} />
-                    <Column field="image" header="תמונה" style={{ width: '10%' }} body={imageBodyTemplate} />
-                    <Column field="donor" header="תורם" style={{ width: '10%' }} body={donorBodyTemplate} />
-
                 </DataTable>
             </div>
             <Button

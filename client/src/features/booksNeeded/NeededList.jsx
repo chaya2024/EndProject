@@ -91,16 +91,6 @@ const BookNeededList = () => {
         </div>
 
         <DataTable value={bookNeededList} paginator rows={10} dataKey="_id" emptyMessage="לא נמצאו ספרים" responsiveLayout="scroll">
-          {isUserLoggedIn && <Column
-            header="פעולות"
-            body={(rowData) => (
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {isUserLoggedIn && <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedBook(rowData)} tooltip="עריכה" style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />}
-                {isUserLoggedIn && <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />}
-              </div>
-            )}
-            style={{ width: '10%' }}
-          />}
           <Column field="name" header="שם" sortable filter filterPlaceholder="חפש לפי שם" />
           <Column field="author" header="מחבר" sortable filter filterPlaceholder="חפש לפי מחבר" />
           <Column
@@ -112,6 +102,16 @@ const BookNeededList = () => {
             dataType="numeric"
             filterElement={priceFilterTemplate}
           />
+          {isUserLoggedIn && <Column
+            header="פעולות"
+            body={(rowData) => (
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {isUserLoggedIn && <Button icon="pi pi-pencil" className="p-button-sm" onClick={() => setSelectedBook(rowData)} tooltip="עריכה" style={{ backgroundColor: '#DEB887', borderColor: '#DEB887', color: 'white' }} />}
+                {isUserLoggedIn && <Button icon="pi pi-trash" className="p-button-sm p-button-danger" onClick={() => handleDeleteClick(rowData)} tooltip="מחיקה" style={{ backgroundColor: '#c4a484', borderColor: '#c4a484', color: 'white' }} />}
+              </div>
+            )}
+            style={{ width: '10%' }}
+          />}
         </DataTable>
       </div>
       <Button
